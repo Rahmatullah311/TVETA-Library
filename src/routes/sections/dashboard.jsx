@@ -10,6 +10,7 @@ import { AuthGuard } from 'src/auth/guard';
 
 import { usePathname } from '../hooks';
 
+
 // ----------------------------------------------------------------------
 
 const IndexPage = lazy(() => import('src/pages/dashboard/one'));
@@ -18,6 +19,8 @@ const PageThree = lazy(() => import('src/pages/dashboard/three'));
 const PageFour = lazy(() => import('src/pages/dashboard/four'));
 const PageFive = lazy(() => import('src/pages/dashboard/five'));
 const PageSix = lazy(() => import('src/pages/dashboard/six'));
+const ServiceProvider = lazy(() => import('src/pages/dashboard/ServiceProvider'));
+const ServicesPage = lazy(() => import('src/pages/dashboard/services'));
 
 // ----------------------------------------------------------------------
 
@@ -44,6 +47,9 @@ export const dashboardRoutes = [
       { element: <IndexPage />, index: true },
       { path: 'two', element: <PageTwo /> },
       { path: 'three', element: <PageThree /> },
+      {path: 'service-provider', element: <ServiceProvider />},
+      {path: 'services', element: <ServicesPage />},
+
       {
         path: 'group',
         children: [

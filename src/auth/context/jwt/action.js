@@ -8,19 +8,19 @@ import { JWT_STORAGE_KEY } from './constant';
 /** **************************************
  * Sign in
  *************************************** */
-export const signInWithPassword = async ({ email, password }) => {
+export const signInWithPassword = async ({ username, password }) => {
   try {
-    const params = { email, password };
+    const params = { username, password };
 
     const res = await axios.post(endpoints.auth.signIn, params);
 
-    const { accessToken } = res.data;
+    const { access } = res.data;
 
-    if (!accessToken) {
+    if (!access) {
       throw new Error('Access token not found in response');
     }
 
-    setSession(accessToken);
+    setSession(access);
   } catch (error) {
     console.error('Error during sign in:', error);
     throw error;
@@ -31,7 +31,7 @@ export const signInWithPassword = async ({ email, password }) => {
  * Sign up
  *************************************** */
 export const signUp = async ({ email, password, firstName, lastName }) => {
-  const params = {
+  const params = { 
     email,
     password,
     firstName,

@@ -154,8 +154,8 @@ export function AccountDrawer({ data = [], sx, ...other }) {
               {user?.email}
             </Typography>
           </Box>
-
-          <Box
+{/* sidebar account info */}
+          {/* <Box
             sx={{
               p: 3,
               gap: 1,
@@ -189,13 +189,13 @@ export function AccountDrawer({ data = [], sx, ...other }) {
                 <Iconify icon="mingcute:add-line" />
               </IconButton>
             </Tooltip>
-          </Box>
+          </Box> */}
 
           {renderList()}
 
-          <Box sx={{ px: 2.5, py: 3 }}>
+          {/* <Box sx={{ px: 2.5, py: 3 }}>
             <UpgradeBlock />
-          </Box>
+          </Box> */}
         </Scrollbar>
 
         <Box sx={{ p: 2.5 }}>

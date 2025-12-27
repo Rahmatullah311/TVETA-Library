@@ -69,6 +69,7 @@ export function JwtSignUpView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
+     
       await signUp({
         email: data.email,
         password: data.password,

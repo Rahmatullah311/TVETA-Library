@@ -58,8 +58,8 @@ export const endpoints = {
   calendar: '/api/calendar',
   auth: {
     me: '/api/auth/me',
-    signIn: '/api/auth/sign-in',
-    signUp: '/api/auth/sign-up',
+    signIn: `${CONFIG.api_root_url}auth/token/`,
+    signUp: `${CONFIG.api_root_url}auth/register/`,
   },
   mail: {
     list: '/api/mail/list',
