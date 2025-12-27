@@ -54,6 +54,9 @@ export const signUp = async ({ email, password, firstName, lastName }) => {
   }
 };
 
+
+
+
 /** **************************************
  * Sign out
  *************************************** */

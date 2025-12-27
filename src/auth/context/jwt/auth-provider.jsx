@@ -61,5 +61,8 @@ export function AuthProvider({ children }) {
     [checkUserSession, state.user, status]
   );
 
+  
+
   return <AuthContext value={memoizedValue}>{children}</AuthContext>;
 }
+

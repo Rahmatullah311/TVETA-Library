@@ -98,7 +98,7 @@ export function ServicesListView() {
       <Box sx={{ mb: 4 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
           <Typography variant="h4" component="h1" gutterBottom>
-            Services Management
+            Choose a service
           </Typography>
           
           <Box sx={{ display: 'flex', gap: 2 }}>
