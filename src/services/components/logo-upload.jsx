@@ -1,12 +1,10 @@
-// src/services/components/logo-upload.jsx
+
 import PropTypes from 'prop-types';
-
-import {Box,Button,Avatar,Typography,IconButton,CircularProgress,} from '@mui/material';
-
-import { useState, useRef } from 'react';
+import { useRef, useState } from 'react';
 
 import DeleteIcon from '@mui/icons-material/Delete';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import {Box,Avatar,Typography,IconButton,CircularProgress,} from '@mui/material';
 
 export function LogoUpload({ value, onChange, disabled, loading, error, helperText }) {
   const [preview, setPreview] = useState(value);

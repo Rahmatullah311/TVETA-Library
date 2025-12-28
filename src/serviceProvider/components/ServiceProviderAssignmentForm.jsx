@@ -1,20 +1,7 @@
 import React, { useState, useEffect } from 'react';
-// Import Typography from MUI
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Alert,
-  Typography,  // Make sure this is imported
-  CircularProgress,
-  Box,
-} from '@mui/material';
+
+import {Box,Alert,Dialog,Button,Select,MenuItem,InputLabel,Typography,DialogTitle,FormControl,DialogContent,DialogActions,CircularProgress,} from '@mui/material';
+
 import { serviceApi } from '../api';
 
 const ServiceProviderAssignmentForm = ({ open, onClose, onSuccess }) => {

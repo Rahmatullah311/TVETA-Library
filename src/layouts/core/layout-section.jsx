@@ -1,3 +1,4 @@
+import { ToastContainer } from 'react-toastify';
 import { mergeClasses } from 'minimal-shared/utils';
 
 import { styled } from '@mui/material/styles';
@@ -5,8 +6,8 @@ import GlobalStyles from '@mui/material/GlobalStyles';
 
 import { layoutClasses } from './classes';
 import { layoutSectionVars } from './css-vars';
-
 // ----------------------------------------------------------------------
+
 
 export function LayoutSection({
   sx,
@@ -48,6 +49,7 @@ export function LayoutSection({
             {footerSection}
           </>
         )}
+        <ToastContainer />
       </LayoutRoot>
     </>
   );

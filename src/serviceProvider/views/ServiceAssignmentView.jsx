@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
-// Import Typography from MUI
-import {Container,Paper,Typography,Button,Box,CircularProgress,Alert,Grid,Avatar,Chip,Card,CardContent,CardHeader,Divider,IconButton,} from '@mui/material';
-import { Add, People, NoAccounts, Delete } from '@mui/icons-material';
-import ServiceProviderAssignmentForm from '../components/ServiceProviderAssignmentForm';
+import { Add, People, Delete, NoAccounts } from '@mui/icons-material';
+import {Box,Grid,Chip,Card,Paper,Alert,Button,Avatar,Divider,Container,Typography,CardHeader,IconButton,CardContent,CircularProgress,} from '@mui/material';
+
 import { serviceApi } from '../api';
+import ServiceProviderAssignmentForm from '../components/ServiceProviderAssignmentForm';
 
 const ServiceAssignmentView = () => {
   const [services, setServices] = useState([]);
@@ -35,9 +35,7 @@ const ServiceAssignmentView = () => {
     }
   };
 
-  const getAssignmentsForService = (serviceId) => {
-    return assignments.filter(a => a.service === serviceId);
-  };
+  const getAssignmentsForService = (serviceId) => assignments.filter(a => a.service === serviceId);
 
   const handleDelete = async (assignmentId) => {
     if (window.confirm('Are you sure you want to remove this assignment?')) {

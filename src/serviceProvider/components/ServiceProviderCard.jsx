@@ -1,10 +1,9 @@
 import React from 'react';
-// Import Typography from MUI
-import {Card,CardContent,Typography,Box,Chip,IconButton,Avatar} from '@mui/material';
-import { Delete, Person } from '@mui/icons-material';
 
-const ServiceProviderCard = ({ assignment, onDelete }) => {
-  return (
+import { Delete, Person } from '@mui/icons-material';
+import {Box,Card,Avatar,Typography,IconButton,CardContent} from '@mui/material';
+
+const ServiceProviderCard = ({ assignment, onDelete }) => (
     <Card sx={{ mb: 2 }}>
       <CardContent>
         <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -42,6 +41,5 @@ const ServiceProviderCard = ({ assignment, onDelete }) => {
       </CardContent>
     </Card>
   );
-};
 
 export default ServiceProviderCard;

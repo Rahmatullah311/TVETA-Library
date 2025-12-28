@@ -1,7 +1,7 @@
 // src/services/hooks/use-services.js
 import { useState, useEffect, useCallback } from 'react';
 
-import { servicesApi, getLogoUrl } from'../api';
+import { getLogoUrl, servicesApi } from'../api';
 
 export function useServices() {
   const [data, setData] = useState({

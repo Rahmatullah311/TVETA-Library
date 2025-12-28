@@ -3,13 +3,10 @@ import axios from 'axios';
 const BASE_URL = 'http://localhost:8000';
 
 // Get JWT token from localStorage
-const getToken = () => {
-  // Check common JWT token storage locations
-  return localStorage.getItem('access_token') || 
+const getToken = () => localStorage.getItem('access_token') || 
          localStorage.getItem('token') || 
          localStorage.getItem('jwt') ||
          localStorage.getItem('auth_token');
-};
 
 // Create axios instance with default headers
 const api = axios.create({
@@ -29,9 +26,7 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 export const serviceApi = {

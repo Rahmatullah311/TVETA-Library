@@ -64,5 +64,7 @@ export function AuthProvider({ children }) {
   
 
   return <AuthContext value={memoizedValue}>{children}</AuthContext>;
+
+  
 }
 

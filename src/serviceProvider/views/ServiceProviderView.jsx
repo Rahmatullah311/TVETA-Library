@@ -1,20 +1,12 @@
 import React, { useState, useEffect } from 'react';
-// Import Typography from MUI
-import {
-  Container,
-  Paper,
-  Typography,  // Make sure this is imported
-  Button,
-  Box,
-  CircularProgress,
-  Alert,
-  TextField,
-  Grid,
-} from '@mui/material';
+
 import { Add, Search } from '@mui/icons-material';
+// Import Typography from MUI
+import {Box,Grid,Paper,Alert,Button,Container,TextField,Typography,CircularProgress,} from '@mui/material';
+
+import { serviceApi } from '../api';
 import ServiceProviderCard from '../components/ServiceProviderCard';
 import ServiceProviderAssignmentForm from '../components/ServiceProviderAssignmentForm';
-import { serviceApi } from '../api';
 
 const ServiceProviderView = () => {
   const [assignments, setAssignments] = useState([]);
@@ -23,27 +15,7 @@ const ServiceProviderView = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [openForm, setOpenForm] = useState(false);
 
-  // useEffect(() => {
-  //   fetchAssignments();
-  // }, []);
 
-  // const fetchAssignments = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const data = await serviceApi.getAssignments();
-  //     setAssignments(data);
-  //     setError('');
-  //   } catch (err) {
-  //     setError('Failed to load assignments. Please try again.');
-  //     console.error(err);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-
-
-  // In ServiceProviderView.jsx, after fetching assignments
 useEffect(() => {
   fetchAssignments();
 }, []);

@@ -3,14 +3,14 @@ import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 
 import {
+  Box,
+  Alert,
   Dialog,
+  Button,
+  TextField,
   DialogTitle,
   DialogContent,
   DialogActions,
-  Button,
-  TextField,
-  Box,
-  Alert,
 } from '@mui/material';
 
 import { LogoUpload } from './logo-upload';
