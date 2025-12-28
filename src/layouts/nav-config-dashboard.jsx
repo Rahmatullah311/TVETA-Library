@@ -49,13 +49,13 @@ export const navData = [
     subheader: 'Overview',
     items: [
       {
-        title: 'One',
+        title: 'Dashboard',
         path: paths.dashboard.root,
         icon: ICONS.dashboard,
         info: <Label>v{CONFIG.appVersion}</Label>,
       },
-      { title: 'Two', path: paths.dashboard.two, icon: ICONS.ecommerce },
-      { title: 'Three', path: paths.dashboard.three, icon: ICONS.analytics },
+      // { title: 'Two', path: paths.dashboard.two, icon: ICONS.ecommerce },
+      { title: 'requests', path: paths.dashboard.requests, icon: ICONS.analytics },
       { title: 'Services', path: paths.dashboard.services, icon: ICONS.label },
       { title: 'Service provider', path: paths.dashboard.serviceProvicer, icon: ICONS.booking },
      
@@ -64,19 +64,19 @@ export const navData = [
   /**
    * Management
    */
-  {
-    subheader: 'Management',
-    items: [
-      {
-        title: 'Group',
-        path: paths.dashboard.group.root,
-        icon: ICONS.user,
-        children: [
-          { title: 'Four', path: paths.dashboard.group.root },
-          { title: 'Five', path: paths.dashboard.group.five },
-          { title: 'Six', path: paths.dashboard.group.six },
-        ],
-      },
-    ],
-  },
+  // {
+  //   subheader: 'Management',
+  //   items: [
+  //     {
+  //       title: 'Group',
+  //       path: paths.dashboard.group.root,
+  //       icon: ICONS.user,
+  //       children: [
+  //         { title: 'Four', path: paths.dashboard.group.root },
+  //         { title: 'Five', path: paths.dashboard.group.five },
+  //         { title: 'Six', path: paths.dashboard.group.six },
+  //       ],
+  //     },
+  //   ],
+  // },
 ];

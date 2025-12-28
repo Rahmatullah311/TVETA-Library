@@ -33,7 +33,6 @@ export const requestsApi = {
   getAssignedRequests: () => serviceRequestApi.get('requests/assigned_to_me/'),
   getById: (id) => serviceRequestApi.get(`requests/${id}/`),
   update: (id, data) => serviceRequestApi.patch(`requests/${id}/`, data),
-  updateStatus: (id, status) => serviceRequestApi.patch(`requests/${id}/update_status/`, { status }),
   delete: (id) => serviceRequestApi.delete(`requests/${id}/`),
 };
 

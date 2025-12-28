@@ -14,13 +14,6 @@ export function ServiceCard({ service, onViewDetails }) {
     onViewDetails?.(service);
   };
 
-  const handleImageClick = (e) => {
-    e.stopPropagation();
-    if (service.logo || service.logo_url) {
-      setExpandedImage(service.logo || service.logo_url);
-      setOpen(true);
-    }
-  };
 
   const handleClose = () => {
     setOpen(false);
@@ -40,7 +33,7 @@ export function ServiceCard({ service, onViewDetails }) {
       >
         {/* Image */}
         <Box
-          onClick={handleImageClick}
+         
           sx={{
             height: 180,
             overflow: 'hidden',
