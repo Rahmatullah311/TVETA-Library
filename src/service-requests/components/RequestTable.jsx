@@ -25,7 +25,7 @@ export default function RequestTable() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [selectedRequest, setSelectedRequest] = useState(null); // selected request for modal
+  const [selectedRequest, setSelectedRequest] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
@@ -44,30 +44,90 @@ export default function RequestTable() {
       setLoading(false);
     }
   };
-  const handleRowClick = async (request) => {
-    try {
-      // Fetch full request details
-      const response = await requestsApi.getById(request.id);
-      const requestData = response.data;
 
-      // Open modal
-      setSelectedRequest(requestData);
-      setModalOpen(true);
+  const handleRowClick = (request) => {
+    // Open modal immediately
+    setSelectedRequest(request);
+    setModalOpen(true);
 
-      // Update status to "viewed" if not already
-      if (requestData.status.toLowerCase() !== 'viewed') {
-        await requestsApi.update(request.id, { status: 'viewed' });
+    (async () => {
+      try {
+        const response = await requestsApi.getById(request.id);
+        const requestData = response.data;
+        setSelectedRequest(requestData);
 
-        // Update table state
-        setRequests((prev) =>
-          prev.map((r) => (r.id === request.id ? { ...r, status: 'viewed' } : r))
-        );
+        // Only mark as viewed if status is "new" or "pending"
+        if (['new', 'pending'].includes(requestData.status.toLowerCase())) {
+          await requestsApi.update(request.id, { status: 'viewed' });
 
-        // Update modal state
-        setSelectedRequest((prev) => ({ ...prev, status: 'viewed' }));
+          // Update modal state
+          setSelectedRequest((prev) => ({ ...prev, status: 'viewed' }));
+
+          // Update table state
+          setRequests((prev) =>
+            prev.map((r) => (r.id === request.id ? { ...r, status: 'viewed' } : r))
+          );
+        }
+      } catch (err) {
+        console.error('Error fetching/updating request:', err);
       }
+    })();
+  };
+
+  // Occupy task (viewed → in_progress)
+  const handleOccupyTask = async () => {
+    if (!selectedRequest) return;
+
+    try {
+      await requestsApi.update(selectedRequest.id, { status: 'in_progress' });
+
+      // Update modal state
+      setSelectedRequest((prev) => ({ ...prev, status: 'in_progress' }));
+
+      // Update table state
+      setRequests((prev) =>
+        prev.map((r) => (r.id === selectedRequest.id ? { ...r, status: 'in_progress' } : r))
+      );
     } catch (err) {
-      console.error('Error fetching or updating request:', err);
+      console.error('Failed to occupy task:', err);
+    }
+  };
+
+  //   complete task (in_progress → completed)
+  const handleCompleteTask = async () => {
+    if (!selectedRequest) return;
+
+    try {
+      await requestsApi.update(selectedRequest.id, { status: 'completed' });
+
+      // Update modal state
+      setSelectedRequest((prev) => ({ ...prev, status: 'completed' }));
+
+      // Update table state
+      setRequests((prev) =>
+        prev.map((r) => (r.id === selectedRequest.id ? { ...r, status: 'completed' } : r))
+      );
+    } catch (err) {
+      console.error('Failed to complete task:', err);
+    }
+  };
+
+  const handleApproveDelivery = async () => {
+    if (!selectedRequest) return;
+
+    try {
+      // Example: update status to "approved" (or call a specific API endpoint)
+      await requestsApi.update(selectedRequest.id, { status: 'approved' });
+
+      // Update modal state
+      setSelectedRequest((prev) => ({ ...prev, status: 'approved' }));
+
+      // Update table state
+      setRequests((prev) =>
+        prev.map((r) => (r.id === selectedRequest.id ? { ...r, status: 'approved' } : r))
+      );
+    } catch (err) {
+      console.error('Failed to approve delivery:', err);
     }
   };
 
@@ -90,20 +150,19 @@ export default function RequestTable() {
       </Typography>
     );
 
-  // For priority
   const priorityColors = {
     low: 'green',
     medium: 'orange',
     high: 'red',
-    urgent: 'purple', // optional extra
+    urgent: 'purple',
   };
 
-  // For status
   const statusColors = {
     new: 'blue',
     in_progress: 'orange',
     viewed: 'green',
-    closed: 'gray',
+    Completed: 'gray',
+    approved: 'darkgreen',
   };
 
   return (
@@ -186,18 +245,9 @@ export default function RequestTable() {
                     borderBottom: '1px solid #eee',
                   }}
                 >
-                  {/* LEFT: key */}
-                  <div
-                    style={{
-                      fontWeight: 'bold',
-                      color: '#555',
-                      textAlign: 'left',
-                    }}
-                  >
+                  <div style={{ fontWeight: 'bold', color: '#555', textAlign: 'left' }}>
                     {field.label}:
                   </div>
-
-                  {/* RIGHT: value */}
                   <div
                     style={{
                       textAlign: 'right',
@@ -214,8 +264,30 @@ export default function RequestTable() {
             <Typography textAlign="center">Loading...</Typography>
           )}
         </DialogContent>
-        <DialogActions sx={{ justifyContent: 'center' }}>
-          <Button onClick={handleClose} variant="contained" color="primary">
+
+        <DialogActions sx={{ justifyContent: 'space-between', padding: '16px' }}>
+          {/* Occupy Task Button */}
+          {selectedRequest && selectedRequest.status.toLowerCase() === 'viewed' && (
+            <Button onClick={handleOccupyTask} variant="contained" color="secondary">
+              Occupy Task
+            </Button>
+          )}
+
+          {/* Complete Task Button */}
+          {selectedRequest && selectedRequest.status.toLowerCase() === 'in_progress' && (
+            <Button onClick={handleCompleteTask} variant="contained" color="success">
+              Mark as Completed
+            </Button>
+          )}
+
+          {/* Approve Delivery Button */}
+          {selectedRequest && selectedRequest.status.toLowerCase() === 'completed' && (
+            <Button onClick={handleApproveDelivery} variant="contained" color="primary">
+              Approve Delivery
+            </Button>
+          )}
+
+          <Button onClick={handleClose} variant="contained" color="inherit">
             Close
           </Button>
         </DialogActions>
@@ -225,5 +297,4 @@ export default function RequestTable() {
 }
 
 // ---------------- HELPERS ----------------
-
 const capitalize = (text) => (text ? text.charAt(0).toUpperCase() + text.slice(1) : '-');
