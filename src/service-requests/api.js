@@ -32,7 +32,13 @@ export const requestsApi = {
   getMyRequests: () => serviceRequestApi.get('requests/my_requests/'),
   getAssignedRequests: () => serviceRequestApi.get('requests/assigned_to_me/'),
   getById: (id) => serviceRequestApi.get(`requests/${id}/`),
-  update: (id, data) => serviceRequestApi.patch(`requests/${id}/`, data),
+  update: (id, data) => 
+  serviceRequestApi.patch(`requests/${id}/`, data, {
+    headers: {
+      'Authorization': `Bearer ${sessionStorage.getItem('jwt_access_token')}`,
+    },
+  }),
+
   delete: (id) => serviceRequestApi.delete(`requests/${id}/`),
 };
 

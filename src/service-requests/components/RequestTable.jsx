@@ -1,5 +1,6 @@
 'use client';
 
+import { Link } from 'react-router';
 import { useState, useEffect } from 'react';
 
 import {
@@ -74,17 +75,15 @@ export default function RequestTable() {
     })();
   };
 
-  // Occupy task (viewed → in_progress)
   const handleOccupyTask = async () => {
     if (!selectedRequest) return;
 
     try {
+      // Only send status; backend will attach provider
       await requestsApi.update(selectedRequest.id, { status: 'in_progress' });
 
-      // Update modal state
       setSelectedRequest((prev) => ({ ...prev, status: 'in_progress' }));
 
-      // Update table state
       setRequests((prev) =>
         prev.map((r) => (r.id === selectedRequest.id ? { ...r, status: 'in_progress' } : r))
       );
@@ -167,6 +166,18 @@ export default function RequestTable() {
 
   return (
     <>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
+        <Button
+          component={Link}
+          to="/dashboard/services"
+          variant="contained"
+          color="primary"
+          title="Click here to create a new service request"
+        >
+          New Request
+        </Button>
+      </div>
+
       <TableContainer component={Paper} sx={{ marginTop: 2 }}>
         <Table>
           <TableHead>
@@ -174,6 +185,8 @@ export default function RequestTable() {
               <TableCell>ID</TableCell>
               <TableCell>Description</TableCell>
               <TableCell>Created By</TableCell>
+              <TableCell>Provider</TableCell>
+              
               <TableCell>Priority</TableCell>
               <TableCell>Status</TableCell>
             </TableRow>
@@ -196,6 +209,9 @@ export default function RequestTable() {
                   <TableCell>{req.id}</TableCell>
                   <TableCell>{req.description}</TableCell>
                   <TableCell>{req.created_by_username}</TableCell>
+                  <TableCell>{req.provider_username || '-'}</TableCell>
+                  
+    
                   <TableCell>
                     <span
                       style={{
@@ -208,6 +224,11 @@ export default function RequestTable() {
                   </TableCell>
                   <TableCell>
                     <span
+                      title={
+                        req.status === 'viewed'
+                          ? 'Request has been viewed but not occupied by any provider'
+                          : 'task has been occupied and a provider is working on it, we will soon inform you once it is ready to deliver.'
+                      }
                       style={{
                         color: statusColors[req.status.toLowerCase()] || 'black',
                         fontWeight: 'bold',
@@ -268,21 +289,36 @@ export default function RequestTable() {
         <DialogActions sx={{ justifyContent: 'space-between', padding: '16px' }}>
           {/* Occupy Task Button */}
           {selectedRequest && selectedRequest.status.toLowerCase() === 'viewed' && (
-            <Button onClick={handleOccupyTask} variant="contained" color="secondary">
+            <Button
+              onClick={handleOccupyTask}
+              title="click here if you want this task to be assigned to you, then keep working on it and after the task is completed, you can change the status to completed to inform the client."
+              variant="contained"
+              color="secondary"
+            >
               Occupy Task
             </Button>
           )}
 
           {/* Complete Task Button */}
           {selectedRequest && selectedRequest.status.toLowerCase() === 'in_progress' && (
-            <Button onClick={handleCompleteTask} variant="contained" color="success">
+            <Button
+              onClick={handleCompleteTask}
+              variant="contained"
+              color="success"
+              title="click here, If you completed the task? wait for the client approve"
+            >
               Mark as Completed
             </Button>
           )}
 
           {/* Approve Delivery Button */}
           {selectedRequest && selectedRequest.status.toLowerCase() === 'completed' && (
-            <Button onClick={handleApproveDelivery} variant="contained" color="primary">
+            <Button
+              onClick={handleApproveDelivery}
+              variant="contained"
+              color="primary"
+              title="click here to approve the delivery of the completed task. This action confirms that you are satisfied with the work done and allows the service provider to finalize the request."
+            >
               Approve Delivery
             </Button>
           )}
