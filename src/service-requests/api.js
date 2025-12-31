@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import api from './api';
+
 const API_BASE_URL = 'http://127.0.0.1:8000';
 
 const serviceRequestApi = axios.create({
@@ -10,9 +12,21 @@ const serviceRequestApi = axios.create({
   },
 });
 
+
+
+export const authApi = {
+  profile: () =>
+    api.get('auth/profile/', {
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem('jwt_access_token')}`,
+      },
+    }),
+};
+
+
 serviceRequestApi.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
+    const token = localStorage.getItem('jwt_access_token') || sessionStorage.getItem('jwt_access_token');
     if (token) config.headers.Authorization = `Bearer ${token}`;
     if (!(config.data instanceof FormData)) config.headers['Content-Type'] = 'application/json';
     return config;
