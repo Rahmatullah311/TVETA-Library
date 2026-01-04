@@ -23,6 +23,7 @@ import { SettingsButton } from '../components/settings-button';
 import { LanguagePopover } from '../components/language-popover';
 import { navData as dashboardNavData } from '../nav-config-dashboard';
 import { dashboardLayoutVars, dashboardNavColorVars } from './css-vars';
+import { NotificationsDrawer } from '../components/notifications-drawer';
 import { MainSection, layoutClasses, HeaderSection, LayoutSection } from '../core';
 
 // ----------------------------------------------------------------------
@@ -130,7 +131,7 @@ export function DashboardLayout({ sx, cssVars, children, slotProps, layoutQuery 
 
           {/** @slot Notifications popover */}
           {/* <NotificationsDrawer data={_notifications} /> */}
-
+          <NotificationsDrawer />
           {/** @slot Contacts popover */}
           {/* <ContactsPopover data={_contacts} /> */}
 

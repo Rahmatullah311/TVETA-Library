@@ -7,7 +7,6 @@ import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Badge from '@mui/material/Badge';
 import Drawer from '@mui/material/Drawer';
-import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
@@ -72,10 +71,10 @@ export function NotificationsDrawer({ data = [], sx, ...other }) {
       <IconButton onClick={onClose} sx={{ display: { xs: 'inline-flex', sm: 'none' } }}>
         <Iconify icon="mingcute:close-line" />
       </IconButton>
-
+{/* 
       <IconButton>
         <Iconify icon="solar:settings-bold-duotone" />
-      </IconButton>
+      </IconButton> */}
     </Box>
   );
 
@@ -147,9 +146,9 @@ export function NotificationsDrawer({ data = [], sx, ...other }) {
         {renderList()}
 
         <Box sx={{ p: 1 }}>
-          <Button fullWidth size="large">
+          {/* <Button fullWidth size="large">
             View all
-          </Button>
+          </Button> */}
         </Box>
       </Drawer>
     </>
