@@ -2,7 +2,6 @@ import { CONFIG } from 'src/global-config';
 import { DashboardContent } from 'src/layouts/dashboard';
 import StatusOverviewPage from 'src/dashboard/status-overview/RequestOverview';
 import ServiceStatusOverview from 'src/dashboard/status-overview/ServiceOverview';
-import ServiceProviderOverview from 'src/dashboard/status-overview/ServiceProviderOverview';
 // ----------------------------------------------------------------------
 
 const metadata = { title: `Dashboard | Dashboard - ${CONFIG.appName}` };
@@ -14,7 +13,7 @@ export default function Page() {
       <DashboardContent>
         <StatusOverviewPage />
         <ServiceStatusOverview />
-        <ServiceProviderOverview />
+
 
       </DashboardContent>
     </>

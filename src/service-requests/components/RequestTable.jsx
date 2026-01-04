@@ -21,7 +21,6 @@ import {
 } from '@mui/material';
 
 import { requestsApi } from '../api';
-import { useAuth } from '../../auth/context/auth-context';
 
 export default function RequestTable() {
   const [requests, setRequests] = useState([]);
@@ -29,27 +28,26 @@ export default function RequestTable() {
   const [error, setError] = useState('');
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const { user } = useAuth();
+
 
   useEffect(() => {
     fetchRequests();
   }, []);
 
-const fetchRequests = async () => {
-  try {
-    setLoading(true);
-    const response = await requestsApi.getAll();
-    // Sort so newest requests appear first
-    const sorted = response.data.sort((a, b) => b.id - a.id);
-    setRequests(sorted);
-  } catch (err) {
-    console.error('REQUEST FETCH ERROR:', err);
-    setError('Failed to load service requests');
-  } finally {
-    setLoading(false);
-  }
-};
-
+  const fetchRequests = async () => {
+    try {
+      setLoading(true);
+      const response = await requestsApi.getAll();
+      // Sort so newest requests appear first
+      const sorted = response.data.sort((a, b) => b.id - a.id);
+      setRequests(sorted);
+    } catch (err) {
+      console.error('REQUEST FETCH ERROR:', err);
+      setError('Failed to load service requests');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const openRequestModal = async (requestId) => {
     try {
@@ -67,9 +65,7 @@ const fetchRequests = async () => {
       }
 
       setSelectedRequest(requestData);
-      setRequests((prev) =>
-        prev.map((r) => (r.id === requestId ? requestData : r))
-      );
+      setRequests((prev) => prev.map((r) => (r.id === requestId ? requestData : r)));
       setModalOpen(true);
     } catch (err) {
       console.error('Error fetching request:', err);
@@ -85,9 +81,7 @@ const fetchRequests = async () => {
       });
 
       setSelectedRequest(updated.data);
-      setRequests((prev) =>
-        prev.map((r) => (r.id === updated.data.id ? updated.data : r))
-      );
+      setRequests((prev) => prev.map((r) => (r.id === updated.data.id ? updated.data : r)));
     } catch (err) {
       console.error('Failed to occupy task:', err);
     }
@@ -102,9 +96,7 @@ const fetchRequests = async () => {
       });
 
       setSelectedRequest(updated.data);
-      setRequests((prev) =>
-        prev.map((r) => (r.id === updated.data.id ? updated.data : r))
-      );
+      setRequests((prev) => prev.map((r) => (r.id === updated.data.id ? updated.data : r)));
     } catch (err) {
       console.error('Failed to complete task:', err);
     }
@@ -119,9 +111,7 @@ const fetchRequests = async () => {
       });
 
       setSelectedRequest(updated.data);
-      setRequests((prev) =>
-        prev.map((r) => (r.id === updated.data.id ? updated.data : r))
-      );
+      setRequests((prev) => prev.map((r) => (r.id === updated.data.id ? updated.data : r)));
     } catch (err) {
       console.error('Failed to approve delivery:', err);
     }
@@ -147,18 +137,21 @@ const fetchRequests = async () => {
     approved: 'darkgreen',
   };
 
-  const canUserComplete = (req) =>
-    req?.is_provider && req.status === 'in_progress';
+  const canUserComplete = (req) => req?.is_provider && req.status === 'in_progress';
 
-  const canUserApprove = (req) =>
-    req?.is_creator && req.status === 'completed';
+  const canUserApprove = (req) => req?.is_creator && req.status === 'completed';
 
-  const canUserOccupy = (req) =>
-    req?.status === 'viewed' && !req?.provider && !req?.is_creator;
+  const canUserOccupy = (req) => req?.status === 'viewed' && !req?.provider && !req?.is_creator;
 
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
+      <div
+        style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginBottom: '16px' }}
+      >
+        <Button variant="outlined" onClick={fetchRequests}>
+          Refresh
+        </Button>
+
         <Button component={Link} to="/dashboard/services" variant="contained">
           New Request
         </Button>
@@ -179,6 +172,7 @@ const fetchRequests = async () => {
               <TableRow>
                 <TableCell>ID</TableCell>
                 <TableCell>Description</TableCell>
+                <TableCell>Service</TableCell>
                 <TableCell>Created By</TableCell>
                 <TableCell>Priority</TableCell>
                 <TableCell>Status</TableCell>
@@ -194,6 +188,7 @@ const fetchRequests = async () => {
                 >
                   <TableCell>{req.id}</TableCell>
                   <TableCell>{req.description}</TableCell>
+                  <TableCell>{req.service_info.title}</TableCell>
                   <TableCell>{req.created_by_username}</TableCell>
                   <TableCell style={{ color: priorityColors[req.priority] }}>
                     {capitalize(req.priority)}
@@ -280,5 +275,4 @@ const Detail = ({ label, value, color }) => (
   </div>
 );
 
-const capitalize = (text) =>
-  text ? text.charAt(0).toUpperCase() + text.slice(1) : '-';
+const capitalize = (text) => (text ? text.charAt(0).toUpperCase() + text.slice(1) : '-');

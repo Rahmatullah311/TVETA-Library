@@ -3,14 +3,8 @@ import { varAlpha } from 'minimal-shared/utils';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Avatar from '@mui/material/Avatar';
-import Typography from '@mui/material/Typography';
-
-import { paths } from 'src/routes/paths';
 
 import { CONFIG } from 'src/global-config';
-
-import { Label } from 'src/components/label';
 
 import { useMockedUser } from 'src/auth/hooks';
 
@@ -24,7 +18,7 @@ export function NavUpgrade({ sx, ...other }) {
       sx={[{ px: 2, py: 5, textAlign: 'center' }, ...(Array.isArray(sx) ? sx : [sx])]}
       {...other}
     >
-      <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+      {/* <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
         <Box sx={{ position: 'relative' }}>
           <Avatar src={user?.photoURL} alt={user?.displayName} sx={{ width: 48, height: 48 }}>
             {user?.displayName?.charAt(0).toUpperCase()}
@@ -72,7 +66,7 @@ export function NavUpgrade({ sx, ...other }) {
         >
           Upgrade to Pro
         </Button>
-      </Box>
+      </Box> */}
     </Box>
   );
 }

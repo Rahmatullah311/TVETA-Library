@@ -57,7 +57,7 @@ export const navData = [
       // { title: 'Two', path: paths.dashboard.two, icon: ICONS.ecommerce },
       { title: 'requests', path: paths.dashboard.requests, icon: ICONS.analytics },
       { title: 'Services', path: paths.dashboard.services, icon: ICONS.label },
-      { title: 'Service provider', path: paths.dashboard.serviceProvicer, icon: ICONS.booking },
+      // { title: 'Service provider', path: paths.dashboard.serviceProvicer, icon: ICONS.booking },
      
     ],
   },

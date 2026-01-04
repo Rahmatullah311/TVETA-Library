@@ -3,7 +3,7 @@ import axios from 'axios';
 
 
 // Base API configuration
-const API_BASE_URL = 'http://127.0.0.1:8000';
+const API_BASE_URL = 'http://127.0.0.1:8000/';
 
 const serviceApi = axios.create({
   baseURL: `${API_BASE_URL}/api/`,
@@ -87,3 +87,4 @@ export const servicesApi = {
 };
 
 export default serviceApi;
+

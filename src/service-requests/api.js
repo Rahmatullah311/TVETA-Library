@@ -1,8 +1,7 @@
 import axios from 'axios';
 
-import api from './api';
 
-const API_BASE_URL = 'http://127.0.0.1:8000';
+const API_BASE_URL = 'http://127.0.0.1:8000/';
 
 const serviceRequestApi = axios.create({
   baseURL: `${API_BASE_URL}/api/`,
@@ -14,14 +13,6 @@ const serviceRequestApi = axios.create({
 
 
 
-export const authApi = {
-  profile: () =>
-    api.get('auth/profile/', {
-      headers: {
-        Authorization: `Bearer ${sessionStorage.getItem('jwt_access_token')}`,
-      },
-    }),
-};
 
 
 serviceRequestApi.interceptors.request.use(

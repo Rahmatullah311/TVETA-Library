@@ -1,11 +1,9 @@
-import { varAlpha } from 'minimal-shared/utils';
+import { useState, useEffect } from 'react';
 import { useBoolean } from 'minimal-shared/hooks';
 
 import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
 import Avatar from '@mui/material/Avatar';
 import Drawer from '@mui/material/Drawer';
-import Tooltip from '@mui/material/Tooltip';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
@@ -13,28 +11,45 @@ import IconButton from '@mui/material/IconButton';
 
 import { paths } from 'src/routes/paths';
 import { usePathname } from 'src/routes/hooks';
-import { RouterLink } from 'src/routes/components';
 
-import { _mock } from 'src/_mock';
-
-import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { AnimateBorder } from 'src/components/animate';
 
-import { useMockedUser } from 'src/auth/hooks';
-
-import { UpgradeBlock } from './nav-upgrade';
 import { AccountButton } from './account-button';
+// ----------------------------------------------------------------------
 import { SignOutButton } from './sign-out-button';
 
-// ----------------------------------------------------------------------
+export function useUserProfile() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // Get the token from sessionStorage
+    const token = sessionStorage.getItem('jwt_access_token'); // <- use the key you stored
+    if (!token) return;
+
+    fetch('http://127.0.0.1:8000/auth/profile/', {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`, // must have 'Bearer '
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error('Unauthorized or server error');
+        return res.json();
+      })
+      .then((data) => setUser(data))
+      .catch((err) => console.error('Failed to fetch user profile', err));
+  }, []);
+
+  return user;
+}
 
 export function AccountDrawer({ data = [], sx, ...other }) {
   const pathname = usePathname();
 
-  const { user } = useMockedUser();
-
+  // const { user } = useMockedUser();
+  const user = useUserProfile();
   const { value: open, onFalse: onClose, onTrue: onOpen } = useBoolean();
 
   const renderAvatar = () => (
@@ -69,7 +84,7 @@ export function AccountDrawer({ data = [], sx, ...other }) {
 
         return (
           <MenuItem key={option.label}>
-            <Link
+            {/* <Link
               component={RouterLink}
               href={option.label === 'Home' ? rootHref : option.href}
               color="inherit"
@@ -97,7 +112,7 @@ export function AccountDrawer({ data = [], sx, ...other }) {
                   {option.info}
                 </Label>
               )}
-            </Link>
+            </Link> */}
           </MenuItem>
         );
       })}
@@ -144,17 +159,17 @@ export function AccountDrawer({ data = [], sx, ...other }) {
               flexDirection: 'column',
             }}
           >
-            {renderAvatar()}
+            <Avatar>{user?.username?.charAt(0).toUpperCase()}</Avatar>
 
             <Typography variant="subtitle1" noWrap sx={{ mt: 2 }}>
-              {user?.displayName}
+              {user?.username}
             </Typography>
 
             <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }} noWrap>
               {user?.email}
             </Typography>
           </Box>
-{/* sidebar account info */}
+          {/* sidebar account info */}
           {/* <Box
             sx={{
               p: 3,
