@@ -74,9 +74,7 @@ export default function RequestTable() {
   const handleOccupyTask = async () => {
     if (!selectedRequest) return;
     try {
-      const updated = await requestsApi.update(selectedRequest.id, {
-        status: 'in_progress',
-      });
+      const updated = await requestsApi.update(selectedRequest.id, { status: 'in_progress' });
       setSelectedRequest(updated.data);
       setRequests((prev) => prev.map((r) => (r.id === updated.data.id ? updated.data : r)));
     } catch (err) {
@@ -122,6 +120,39 @@ export default function RequestTable() {
     }
   };
 
+  // New file upload handling
+  const handleFileSelect = (e) => {
+    if (!selectedRequest) return;
+    const file = e.target.files[0];
+    if (!file) return;
+    setSelectedRequest({
+      ...selectedRequest,
+      newFiles: [...(selectedRequest.newFiles || []), file],
+    });
+  };
+  const handleSaveFiles = async () => {
+    if (!selectedRequest || !selectedRequest.newFiles?.length) return;
+
+    try {
+      for (const f of selectedRequest.newFiles) {
+        const formData = new FormData();
+        formData.append('file', f); // ✅ MUST be "file"
+
+        const response = await requestsApi.uploadFile(selectedRequest.id, formData);
+
+        setSelectedRequest((prev) => ({
+          ...prev,
+          files: [...(prev.files || []), response.data], // ✅ single object
+        }));
+      }
+
+      // clear temp files
+      setSelectedRequest((prev) => ({ ...prev, newFiles: [] }));
+    } catch (err) {
+      console.error('Failed to save files', err);
+    }
+  };
+
   const handleClose = () => {
     setModalOpen(false);
     setSelectedRequest(null);
@@ -146,48 +177,45 @@ export default function RequestTable() {
   const canUserApprove = (req) => req?.is_creator && req.status === 'completed';
   const canUserOccupy = (req) => req?.status === 'viewed' && !req?.provider && !req?.is_creator;
 
-  // Filtered requests based on search
   const filteredRequests = requests.filter((r) =>
     r.serial_number?.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
     <>
+      {/* Top Bar */}
       <div
-  style={{
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '16px',
-    gap: '16px',
-  }}
->
-  {/* Left side: Search bar, only for provider */}
-  <div>
-    {requests.some(r => r.is_provider) && (
-      <TextField
-        label="Search Serial Number"
-        variant="outlined"
-        size="small"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        sx={{ width: '250px' }}
-      />
-    )}
-  </div>
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '16px',
+          gap: '16px',
+        }}
+      >
+        <div>
+          {requests.some((r) => r.is_provider) && (
+            <TextField
+              label="Search Serial Number"
+              variant="outlined"
+              size="small"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              sx={{ width: '250px' }}
+            />
+          )}
+        </div>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <Button variant="outlined" onClick={fetchRequests}>
+            Refresh
+          </Button>
+          <Button component={Link} to="/dashboard/services" variant="contained">
+            New Request
+          </Button>
+        </div>
+      </div>
 
-  {/* Right side: Buttons */}
-  <div style={{ display: 'flex', gap: '8px' }}>
-    <Button variant="outlined" onClick={fetchRequests}>
-      Refresh
-    </Button>
-    <Button component={Link} to="/dashboard/services" variant="contained">
-      New Request
-    </Button>
-  </div>
-</div>
-
-
+      {/* Table */}
       {loading ? (
         <div style={{ textAlign: 'center', padding: '20px' }}>
           <CircularProgress />
@@ -208,6 +236,7 @@ export default function RequestTable() {
                 <TableCell>Priority</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell>Serial Number</TableCell>
+                {/* <TableCell>Files</TableCell> */}
                 <TableCell>Created At</TableCell>
               </TableRow>
             </TableHead>
@@ -216,15 +245,7 @@ export default function RequestTable() {
                 <TableRow
                   key={req.id}
                   hover
-                  sx={{
-                    cursor: 'pointer',
-                    color:
-                      search && req.serial_number?.toLowerCase().includes(search.toLowerCase())
-                        ? 'inherit'
-                        : search
-                          ? 'red'
-                          : 'inherit',
-                  }}
+                  sx={{ cursor: 'pointer' }}
                   onClick={() => openRequestModal(req.id)}
                 >
                   <TableCell>{req.id}</TableCell>
@@ -237,16 +258,22 @@ export default function RequestTable() {
                   <TableCell style={{ color: statusColors[req.status] }}>
                     {capitalize(req.status)}
                   </TableCell>
-                  <TableCell
-                    style={{
-                      color:
-                        search && !req.serial_number?.toLowerCase().includes(search.toLowerCase())
-                          ? 'red'
-                          : 'inherit',
-                    }}
-                  >
-                    {req.serial_number || '-'}
-                  </TableCell>
+                  <TableCell>{req.serial_number || '-'}</TableCell>
+                  {/* <TableCell>
+                    {req.is_provider && req.files?.length > 0
+                      ? req.files.map((f) => (
+                          <a
+                            key={f.id}
+                            href={f.file}
+                            target="_blank"
+                            rel="noreferrer"
+                            style={{ marginRight: 5 }}
+                          >
+                            {f.file.split('/').pop()}
+                          </a>
+                        ))
+                      : '-'}
+                  </TableCell> */}
                   <TableCell>{new Date(req.created_at).toLocaleString()}</TableCell>
                 </TableRow>
               ))}
@@ -283,7 +310,7 @@ export default function RequestTable() {
                 value={new Date(selectedRequest.created_at).toLocaleString()}
               />
 
-              {/* Serial Number editable for provider */}
+              {/* Serial Number */}
               {selectedRequest.is_provider ? (
                 <div
                   style={{
@@ -300,10 +327,7 @@ export default function RequestTable() {
                     variant="outlined"
                     value={selectedRequest.serial_number || ''}
                     onChange={(e) =>
-                      setSelectedRequest({
-                        ...selectedRequest,
-                        serial_number: e.target.value,
-                      })
+                      setSelectedRequest({ ...selectedRequest, serial_number: e.target.value })
                     }
                     placeholder="Enter serial number"
                     sx={{ width: '200px' }}
@@ -312,6 +336,40 @@ export default function RequestTable() {
               ) : selectedRequest.serial_number ? (
                 <Detail label="Serial Number" value={selectedRequest.serial_number} />
               ) : null}
+
+              {/* Files */}
+              {selectedRequest.is_provider && (
+                <div style={{ marginTop: '16px' }}>
+                  <Button variant="outlined" component="label">
+                    Upload File
+                    <input type="file" hidden onChange={handleFileSelect} />
+                  </Button>
+
+                  {selectedRequest.newFiles?.length > 0 && (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      sx={{ ml: 2 }}
+                      onClick={handleSaveFiles}
+                    >
+                      Save Files
+                    </Button>
+                  )}
+
+                  <ul style={{ marginTop: '8px' }}>
+                    {(selectedRequest.files || []).map((f) => (
+                      <li key={f.id}>
+                        <a href={f.file} target="_blank" rel="noreferrer">
+                          {f.file.split('/').pop()}
+                        </a>
+                      </li>
+                    ))}
+                    {(selectedRequest.newFiles || []).map((f, i) => (
+                      <li key={i}>{f.name} (new)</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </>
           ) : (
             <Typography align="center">Loading...</Typography>
@@ -319,7 +377,6 @@ export default function RequestTable() {
         </DialogContent>
 
         <DialogActions sx={{ justifyContent: 'space-between' }}>
-          {/* Save serial number */}
           {selectedRequest?.is_provider && (
             <Button onClick={handleSaveSerial} variant="contained" color="primary">
               Save Serial Number
