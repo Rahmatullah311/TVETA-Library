@@ -12,6 +12,7 @@ import {
   TableBody,
   TableCell,
   TableHead,
+  TextField,
   Typography,
   DialogTitle,
   DialogContent,
@@ -28,7 +29,7 @@ export default function RequestTable() {
   const [error, setError] = useState('');
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     fetchRequests();
@@ -38,7 +39,6 @@ export default function RequestTable() {
     try {
       setLoading(true);
       const response = await requestsApi.getAll();
-      // Sort so newest requests appear first
       const sorted = response.data.sort((a, b) => b.id - a.id);
       setRequests(sorted);
     } catch (err) {
@@ -54,11 +54,10 @@ export default function RequestTable() {
       const response = await requestsApi.getById(requestId);
       let requestData = response.data;
 
-      // Mark as viewed if user is not creator and no provider
       if (
         !requestData.is_creator &&
         !requestData.provider &&
-        ['new', 'pending'].includes(requestData.status?.toLowerCase())
+        ['pending', 'new'].includes(requestData.status?.toLowerCase())
       ) {
         const updated = await requestsApi.update(requestId, { status: 'viewed' });
         requestData = updated.data;
@@ -74,12 +73,10 @@ export default function RequestTable() {
 
   const handleOccupyTask = async () => {
     if (!selectedRequest) return;
-
     try {
       const updated = await requestsApi.update(selectedRequest.id, {
         status: 'in_progress',
       });
-
       setSelectedRequest(updated.data);
       setRequests((prev) => prev.map((r) => (r.id === updated.data.id ? updated.data : r)));
     } catch (err) {
@@ -89,12 +86,11 @@ export default function RequestTable() {
 
   const handleCompleteTask = async () => {
     if (!selectedRequest) return;
-
     try {
       const updated = await requestsApi.update(selectedRequest.id, {
         status: 'completed',
+        serial_number: selectedRequest.serial_number || undefined,
       });
-
       setSelectedRequest(updated.data);
       setRequests((prev) => prev.map((r) => (r.id === updated.data.id ? updated.data : r)));
     } catch (err) {
@@ -104,16 +100,25 @@ export default function RequestTable() {
 
   const handleApproveDelivery = async () => {
     if (!selectedRequest) return;
-
     try {
-      const updated = await requestsApi.update(selectedRequest.id, {
-        status: 'approved',
-      });
-
+      const updated = await requestsApi.update(selectedRequest.id, { status: 'approved' });
       setSelectedRequest(updated.data);
       setRequests((prev) => prev.map((r) => (r.id === updated.data.id ? updated.data : r)));
     } catch (err) {
       console.error('Failed to approve delivery:', err);
+    }
+  };
+
+  const handleSaveSerial = async () => {
+    if (!selectedRequest) return;
+    try {
+      const updated = await requestsApi.update(selectedRequest.id, {
+        serial_number: selectedRequest.serial_number,
+      });
+      setSelectedRequest(updated.data);
+      setRequests((prev) => prev.map((r) => (r.id === updated.data.id ? updated.data : r)));
+    } catch (err) {
+      console.error('Failed to save serial number:', err);
     }
   };
 
@@ -130,7 +135,7 @@ export default function RequestTable() {
   };
 
   const statusColors = {
-    new: 'blue',
+    pending: 'blue',
     viewed: 'green',
     in_progress: 'orange',
     completed: 'gray',
@@ -138,24 +143,50 @@ export default function RequestTable() {
   };
 
   const canUserComplete = (req) => req?.is_provider && req.status === 'in_progress';
-
   const canUserApprove = (req) => req?.is_creator && req.status === 'completed';
-
   const canUserOccupy = (req) => req?.status === 'viewed' && !req?.provider && !req?.is_creator;
+
+  // Filtered requests based on search
+  const filteredRequests = requests.filter((r) =>
+    r.serial_number?.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <>
       <div
-        style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginBottom: '16px' }}
-      >
-        <Button variant="outlined" onClick={fetchRequests}>
-          Refresh
-        </Button>
+  style={{
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '16px',
+    gap: '16px',
+  }}
+>
+  {/* Left side: Search bar, only for provider */}
+  <div>
+    {requests.some(r => r.is_provider) && (
+      <TextField
+        label="Search Serial Number"
+        variant="outlined"
+        size="small"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        sx={{ width: '250px' }}
+      />
+    )}
+  </div>
 
-        <Button component={Link} to="/dashboard/services" variant="contained">
-          New Request
-        </Button>
-      </div>
+  {/* Right side: Buttons */}
+  <div style={{ display: 'flex', gap: '8px' }}>
+    <Button variant="outlined" onClick={fetchRequests}>
+      Refresh
+    </Button>
+    <Button component={Link} to="/dashboard/services" variant="contained">
+      New Request
+    </Button>
+  </div>
+</div>
+
 
       {loading ? (
         <div style={{ textAlign: 'center', padding: '20px' }}>
@@ -176,14 +207,24 @@ export default function RequestTable() {
                 <TableCell>Created By</TableCell>
                 <TableCell>Priority</TableCell>
                 <TableCell>Status</TableCell>
+                <TableCell>Serial Number</TableCell>
+                <TableCell>Created At</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {requests.map((req) => (
+              {(search ? filteredRequests : requests).map((req) => (
                 <TableRow
                   key={req.id}
                   hover
-                  sx={{ cursor: 'pointer' }}
+                  sx={{
+                    cursor: 'pointer',
+                    color:
+                      search && req.serial_number?.toLowerCase().includes(search.toLowerCase())
+                        ? 'inherit'
+                        : search
+                          ? 'red'
+                          : 'inherit',
+                  }}
                   onClick={() => openRequestModal(req.id)}
                 >
                   <TableCell>{req.id}</TableCell>
@@ -196,6 +237,17 @@ export default function RequestTable() {
                   <TableCell style={{ color: statusColors[req.status] }}>
                     {capitalize(req.status)}
                   </TableCell>
+                  <TableCell
+                    style={{
+                      color:
+                        search && !req.serial_number?.toLowerCase().includes(search.toLowerCase())
+                          ? 'red'
+                          : 'inherit',
+                    }}
+                  >
+                    {req.serial_number || '-'}
+                  </TableCell>
+                  <TableCell>{new Date(req.created_at).toLocaleString()}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -203,9 +255,9 @@ export default function RequestTable() {
         </TableContainer>
       )}
 
+      {/* Modal */}
       <Dialog open={modalOpen} onClose={handleClose} maxWidth="sm" fullWidth>
         <DialogTitle>Request Details</DialogTitle>
-
         <DialogContent dividers>
           {selectedRequest ? (
             <>
@@ -226,6 +278,40 @@ export default function RequestTable() {
                 value={capitalize(selectedRequest.status)}
                 color={statusColors[selectedRequest.status]}
               />
+              <Detail
+                label="Created At"
+                value={new Date(selectedRequest.created_at).toLocaleString()}
+              />
+
+              {/* Serial Number editable for provider */}
+              {selectedRequest.is_provider ? (
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '8px 0',
+                    gap: '16px',
+                  }}
+                >
+                  <strong>Serial Number:</strong>
+                  <TextField
+                    size="small"
+                    variant="outlined"
+                    value={selectedRequest.serial_number || ''}
+                    onChange={(e) =>
+                      setSelectedRequest({
+                        ...selectedRequest,
+                        serial_number: e.target.value,
+                      })
+                    }
+                    placeholder="Enter serial number"
+                    sx={{ width: '200px' }}
+                  />
+                </div>
+              ) : selectedRequest.serial_number ? (
+                <Detail label="Serial Number" value={selectedRequest.serial_number} />
+              ) : null}
             </>
           ) : (
             <Typography align="center">Loading...</Typography>
@@ -233,6 +319,13 @@ export default function RequestTable() {
         </DialogContent>
 
         <DialogActions sx={{ justifyContent: 'space-between' }}>
+          {/* Save serial number */}
+          {selectedRequest?.is_provider && (
+            <Button onClick={handleSaveSerial} variant="contained" color="primary">
+              Save Serial Number
+            </Button>
+          )}
+
           {selectedRequest && canUserOccupy(selectedRequest) && (
             <Button onClick={handleOccupyTask} variant="contained" color="secondary">
               Occupy Task
