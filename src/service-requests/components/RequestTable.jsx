@@ -136,17 +136,16 @@ export default function RequestTable() {
     try {
       for (const f of selectedRequest.newFiles) {
         const formData = new FormData();
-        formData.append('file', f); // ✅ MUST be "file"
+        formData.append('file', f); 
 
         const response = await requestsApi.uploadFile(selectedRequest.id, formData);
 
         setSelectedRequest((prev) => ({
           ...prev,
-          files: [...(prev.files || []), response.data], // ✅ single object
+          files: [...(prev.files || []), response.data], 
         }));
       }
 
-      // clear temp files
       setSelectedRequest((prev) => ({ ...prev, newFiles: [] }));
     } catch (err) {
       console.error('Failed to save files', err);
