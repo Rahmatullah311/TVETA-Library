@@ -1,232 +1,124 @@
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Avatar from '@mui/material/Avatar';
-import SvgIcon from '@mui/material/SvgIcon';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import ListItemButton from '@mui/material/ListItemButton';
+import { useState } from 'react';
+import { formatDistanceToNow } from 'date-fns';
 
-import { fToNow } from 'src/utils/format-time';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
 
 import { Label } from 'src/components/label';
-import { FileThumbnail } from 'src/components/file-thumbnail';
-
-import { notificationIcons } from './icons';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-const readerContent = (data) => (
-  <Box
-    dangerouslySetInnerHTML={{ __html: data }}
-    sx={{
-      '& p': { m: 0, typography: 'body2' },
-      '& a': { color: 'inherit', textDecoration: 'none' },
-      '& strong': { typography: 'subtitle2' },
-    }}
-  />
-);
+export function NotificationItem({ notification, onClick }) {
+  const [isHovered, setIsHovered] = useState(false);
 
-const renderIcon = (type) =>
-  ({
-    order: notificationIcons.order,
-    chat: notificationIcons.chat,
-    mail: notificationIcons.mail,
-    delivery: notificationIcons.delivery,
-  })[type];
+  const getIcon = (type) => {
+    switch (type) {
+      case 'success':
+        return 'mdi:check-circle-outline';
+      case 'error':
+        return 'mdi:alert-circle-outline';
+      case 'warning':
+        return 'mdi:alert-outline';
+      case 'info':
+      default:
+        return 'mdi:information-outline';
+    }
+  };
 
-export function NotificationItem({ notification }) {
-  const renderAvatar = () => (
-    <ListItemAvatar>
-      {notification.avatarUrl ? (
-        <Avatar src={notification.avatarUrl} sx={{ bgcolor: 'background.neutral' }} />
-      ) : (
+  const getColor = (type) => {
+    switch (type) {
+      case 'success':
+        return 'success';
+      case 'error':
+        return 'error';
+      case 'warning':
+        return 'warning';
+      case 'info':
+      default:
+        return 'info';
+    }
+  };
+
+  return (
+    <Card
+      sx={{
+        width: '100%',
+        mb: 1,
+        mx: 1,
+        cursor: 'pointer',
+        transition: 'all 0.2s ease',
+        backgroundColor: notification.isUnRead ? 'action.hover' : 'background.paper',
+        borderLeft: 3,
+        borderColor: getColor(notification.type),
+        '&:hover': {
+          transform: 'translateY(-2px)',
+          boxShadow: (theme) => theme.shadows[8],
+        },
+      }}
+      onClick={onClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <Box sx={{ p: 2, display: 'flex', alignItems: 'flex-start', gap: 2 }}>
         <Box
           sx={{
             width: 40,
             height: 40,
-            display: 'flex',
             borderRadius: '50%',
+            display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            bgcolor: 'background.neutral',
+            bgcolor: `${getColor(notification.type)}.light`,
+            color: `${getColor(notification.type)}.dark`,
           }}
         >
-          <SvgIcon sx={{ width: 24, height: 24 }}>{renderIcon(notification.type)}</SvgIcon>
+          <Iconify icon={getIcon(notification.type)} width={24} />
         </Box>
-      )}
-    </ListItemAvatar>
-  );
 
-  const renderText = () => (
-    <ListItemText
-      primary={readerContent(notification.title)}
-      secondary={
-        <>
-          {fToNow(notification.createdAt)}
-          <Box
-            component="span"
-            sx={{ width: 2, height: 2, borderRadius: '50%', bgcolor: 'currentColor' }}
-          />
-          {notification.category}
-        </>
-      }
-      slotProps={{
-        primary: {
-          sx: { mb: 0.5 },
-        },
-        secondary: {
-          sx: {
-            gap: 0.5,
-            display: 'flex',
-            alignItems: 'center',
-            typography: 'caption',
-            color: 'text.disabled',
-          },
-        },
-      }}
-    />
-  );
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <Typography variant="subtitle2" noWrap sx={{ mb: 0.5 }}>
+              {notification.title || 'Notification'}
+            </Typography>
 
-  const renderUnReadBadge = () =>
-    notification.isUnRead && (
-      <Box
-        sx={{
-          top: 26,
-          width: 8,
-          height: 8,
-          right: 20,
-          borderRadius: '50%',
-          bgcolor: 'info.main',
-          position: 'absolute',
-        }}
-      />
-    );
+            {notification.isUnRead && (
+              <Label color="info" variant="soft" size="small">
+                New
+              </Label>
+            )}
+          </Box>
 
-  const renderFriendAction = () => (
-    <Box sx={{ gap: 1, mt: 1.5, display: 'flex' }}>
-      <Button size="small" variant="contained">
-        Accept
-      </Button>
-      <Button size="small" variant="outlined">
-        Decline
-      </Button>
-    </Box>
-  );
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+            {notification.message}
+          </Typography>
 
-  const renderProjectAction = () => (
-    <>
-      <Box
-        sx={{
-          p: 1.5,
-          my: 1.5,
-          borderRadius: 1.5,
-          color: 'text.secondary',
-          bgcolor: 'background.neutral',
-        }}
-      >
-        {readerContent(
-          `<p><strong>@Jaydon Frankie</strong> feedback by asking questions or just leave a note of appreciation.</p>`
-        )}
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="caption" color="text.disabled">
+              {notification.timestamp
+                ? formatDistanceToNow(new Date(notification.timestamp), { addSuffix: true })
+                : 'Just now'}
+            </Typography>
+
+            {isHovered && (
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClick();
+                }}
+              >
+                <Iconify
+                  icon={notification.isUnRead ? 'mdi:eye-outline' : 'mdi:eye-off-outline'}
+                  width={16}
+                />
+              </IconButton>
+            )}
+          </Box>
+        </Box>
       </Box>
-
-      <Button size="small" variant="contained" sx={{ alignSelf: 'flex-start' }}>
-        Reply
-      </Button>
-    </>
-  );
-
-  const renderFileAction = () => (
-    <Box
-      sx={(theme) => ({
-        p: theme.spacing(1.5, 1.5, 1.5, 1),
-        gap: 1,
-        mt: 1.5,
-        display: 'flex',
-        borderRadius: 1.5,
-        bgcolor: 'background.neutral',
-      })}
-    >
-      <FileThumbnail file="http://localhost:8080/httpsdesign-suriname-2015.mp3" />
-
-      <ListItemText
-        primary="design-suriname-2015.mp3 design-suriname-2015.mp3"
-        secondary="2.3 Mb"
-        slotProps={{
-          primary: {
-            noWrap: true,
-            sx: (theme) => ({
-              color: 'text.secondary',
-              fontSize: theme.typography.pxToRem(13),
-            }),
-          },
-          secondary: {
-            sx: {
-              mt: 0.25,
-              typography: 'caption',
-              color: 'text.disabled',
-            },
-          },
-        }}
-      />
-
-      <Button size="small" variant="outlined" sx={{ flexShrink: 0 }}>
-        Download
-      </Button>
-    </Box>
-  );
-
-  const renderTagsAction = () => (
-    <Box
-      sx={{
-        mt: 1.5,
-        gap: 0.75,
-        display: 'flex',
-        flexWrap: 'wrap',
-      }}
-    >
-      <Label variant="outlined" color="info">
-        Design
-      </Label>
-      <Label variant="outlined" color="warning">
-        Dashboard
-      </Label>
-      <Label variant="outlined">Design system</Label>
-    </Box>
-  );
-
-  const renderPaymentAction = () => (
-    <Box sx={{ gap: 1, mt: 1.5, display: 'flex' }}>
-      <Button size="small" variant="contained">
-        Pay
-      </Button>
-      <Button size="small" variant="outlined">
-        Decline
-      </Button>
-    </Box>
-  );
-
-  return (
-    <ListItemButton
-      disableRipple
-      sx={[
-        (theme) => ({
-          p: 2.5,
-          alignItems: 'flex-start',
-          borderBottom: `dashed 1px ${theme.vars.palette.divider}`,
-        }),
-      ]}
-    >
-      {renderUnReadBadge()}
-      {renderAvatar()}
-
-      <Box sx={{ minWidth: 0, flex: '1 1 auto' }}>
-        {renderText()}
-        {notification.type === 'friend' && renderFriendAction()}
-        {notification.type === 'project' && renderProjectAction()}
-        {notification.type === 'file' && renderFileAction()}
-        {notification.type === 'tags' && renderTagsAction()}
-        {notification.type === 'payment' && renderPaymentAction()}
-      </Box>
-    </ListItemButton>
+    </Card>
   );
 }
