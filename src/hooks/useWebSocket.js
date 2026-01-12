@@ -8,14 +8,14 @@ export const useWebSocket = (token) => {
   const reconnectTimeoutRef = useRef(null);
   const heartbeatIntervalRef = useRef(null);
 
-  // Connect to WebSocket
   const connect = useCallback(() => {
-    if (!token || wsRef.current?.readyState === WebSocket.OPEN) return;
+    // Prevent duplicate connections
+    if (!token || wsRef.current) return;
 
     const wsUrl =
       process.env.NODE_ENV === 'production'
         ? `wss://${window.location.host}/ws/notifications/?token=${token}`
-        : `ws://127.0.0.1:8001/ws/notifications/?token=${token}`;
+        : `ws://127.0.0.1:8000/ws/notifications/?token=${token}`;
 
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
@@ -35,15 +35,19 @@ export const useWebSocket = (token) => {
       try {
         const data = JSON.parse(event.data);
 
-        // Skip heartbeat
-        if (data.type === 'heartbeat' || data.type === 'connection_success') return;
+        // Ignore heartbeat / system messages
+        if (
+          data?.type === 'heartbeat' ||
+          data?.type === 'connection_success'
+        ) {
+          return;
+        }
 
-        // Prepend new notifications so latest is on top
         setNotifications((prev) => [
           {
-            id: data.id || Date.now(),
-            message: data.message,
+            id: data.id ?? `${Date.now()}-${Math.random()}`,
             title: data.title || 'Notification',
+            message: data.message,
             type: data.type || 'info',
             isUnRead: true,
             timestamp: data.created_at || new Date().toISOString(),
@@ -57,9 +61,12 @@ export const useWebSocket = (token) => {
 
     ws.onclose = () => {
       setIsConnected(false);
-      clearInterval(heartbeatIntervalRef.current);
+      wsRef.current = null;
 
-      // Reconnect after 5 seconds
+      clearInterval(heartbeatIntervalRef.current);
+      heartbeatIntervalRef.current = null;
+
+      // Auto-reconnect after 5 seconds
       reconnectTimeoutRef.current = setTimeout(connect, 5000);
     };
 
@@ -73,16 +80,22 @@ export const useWebSocket = (token) => {
     connect();
 
     return () => {
-      clearInterval(heartbeatIntervalRef.current);
       clearTimeout(reconnectTimeoutRef.current);
-      wsRef.current?.close();
+      clearInterval(heartbeatIntervalRef.current);
+
+      if (wsRef.current) {
+        wsRef.current.close();
+        wsRef.current = null;
+      }
     };
   }, [connect]);
 
   // MARK SINGLE AS READ
   const markAsRead = useCallback((id) => {
     setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, isUnRead: false } : n))
+      prev.map((n) =>
+        n.id === id ? { ...n, isUnRead: false } : n
+      )
     );
   }, []);
 
