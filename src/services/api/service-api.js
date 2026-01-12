@@ -6,7 +6,7 @@ import axios from 'axios';
 const API_BASE_URL = 'http://127.0.0.1:8000/';
 
 const serviceApi = axios.create({
-  baseURL: `${API_BASE_URL}/api/`,
+  baseURL: `${API_BASE_URL}api/`,
   timeout: 30000, // Increased for file uploads
   headers: {
     'Accept': 'application/json',
