@@ -22,6 +22,8 @@ import {
 } from '@mui/material';
 
 import { requestsApi } from '../api';
+import ChatDialog from './chat/ChatDialog';
+
 
 export default function RequestTable() {
   const [requests, setRequests] = useState([]);
@@ -30,6 +32,7 @@ export default function RequestTable() {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [search, setSearch] = useState('');
+  const [chatOpen, setChatOpen] = useState(false);
 
   useEffect(() => {
     fetchRequests();
@@ -136,13 +139,13 @@ export default function RequestTable() {
     try {
       for (const f of selectedRequest.newFiles) {
         const formData = new FormData();
-        formData.append('file', f); 
+        formData.append('file', f);
 
         const response = await requestsApi.uploadFile(selectedRequest.id, formData);
 
         setSelectedRequest((prev) => ({
           ...prev,
-          files: [...(prev.files || []), response.data], 
+          files: [...(prev.files || []), response.data],
         }));
       }
 
@@ -283,7 +286,28 @@ export default function RequestTable() {
 
       {/* Modal */}
       <Dialog open={modalOpen} onClose={handleClose} maxWidth="sm" fullWidth>
-        <DialogTitle>Request Details</DialogTitle>
+        <DialogTitle
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Typography variant="h6">Request Details</Typography>
+
+         
+            <Button variant="contained" size="small" onClick={() => setChatOpen(true)}>
+              Chat 
+            </Button>
+       
+        </DialogTitle>
+
+        <ChatDialog
+          open={chatOpen}
+          onClose={() => setChatOpen(false)}
+          requestId={selectedRequest?.id}
+        />
+
         <DialogContent dividers>
           {selectedRequest ? (
             <>

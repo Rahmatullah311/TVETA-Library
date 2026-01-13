@@ -21,7 +21,6 @@ import { MenuButton } from '../components/menu-button';
 import { AccountDrawer } from '../components/account-drawer';
 import { SettingsButton } from '../components/settings-button';
 import { LanguagePopover } from '../components/language-popover';
-import { ContactsPopover } from '../components/contacts-popover';
 import { navData as dashboardNavData } from '../nav-config-dashboard';
 import { dashboardLayoutVars, dashboardNavColorVars } from './css-vars';
 import { NotificationsDrawer } from '../components/notifications-drawer';
@@ -136,7 +135,7 @@ export function DashboardLayout({ sx, cssVars, children, slotProps, layoutQuery 
           {/** @slot Contacts popover */}
           {/* <ContactsPopover data={_contacts} /> */}
 
-          <ContactsPopover />
+          {/* <ContactsPopover /> */}
           {/** @slot Settings button */}
           <SettingsButton />
 
