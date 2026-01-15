@@ -1,11 +1,12 @@
 'use client';
 
+import { useTranslation } from 'react-i18next';
 import { useRef, useState, useEffect } from 'react';
 
-import SendIcon from '@mui/icons-material/Send';
 import { Button, TextField } from '@mui/material';
 
 export default function ChatWindow({ requestId, currentUser }) {
+  const { t } = useTranslation();
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const ws = useRef(null);
@@ -94,7 +95,7 @@ useEffect(() => {
           multiline
           maxRows={4}
           size="small"
-          placeholder="Type a message…"
+          placeholder={t('Typeamessage…')}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
@@ -105,7 +106,7 @@ useEffect(() => {
           disabled={!canSend}
           onClick={handleSend}
         >
-          <SendIcon />
+          {t('submit')}
         </Button>
       </div>
     </>

@@ -1,3 +1,4 @@
+
 import { paths } from 'src/routes/paths';
 
 import { CONFIG } from 'src/global-config';
@@ -41,7 +42,9 @@ const ICONS = {
 
 // ----------------------------------------------------------------------
 
-export const navData = [
+// exptects translation keywords as t
+export const navData = (t) => [
+  // t is used for trsanslation 
   /**
    * Overview
    */
@@ -49,14 +52,14 @@ export const navData = [
     subheader: 'Overview',
     items: [
       {
-        title: 'Dashboard',
+        title: `${t('Dashboard')}`,
         path: paths.dashboard.root,
         icon: ICONS.dashboard,
         info: <Label>v{CONFIG.appVersion}</Label>,
       },
       // { title: 'Two', path: paths.dashboard.two, icon: ICONS.ecommerce },
-      { title: 'requests', path: paths.dashboard.requests, icon: ICONS.analytics },
-      { title: 'Services', path: paths.dashboard.services, icon: ICONS.label },
+      { title: `${t('Requests')}`, path: paths.dashboard.requests, icon: ICONS.analytics },
+      { title: `${t('Services')}`, path: paths.dashboard.services, icon: ICONS.label },
       // { title: 'Service provider', path: paths.dashboard.serviceProvicer, icon: ICONS.booking },
      
     ],

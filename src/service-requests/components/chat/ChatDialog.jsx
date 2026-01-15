@@ -1,12 +1,16 @@
+import { useTranslation } from 'react-i18next';
+
 import { Dialog, Button, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 
 import ChatWindow from './ChatWindow';
 
+
 export default function ChatDialog({ open, onClose, requestId }) {
+  const { t } = useTranslation();
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>
-        Chat — Request #{requestId}
+        {t('Chat—Request')} #{requestId}
       </DialogTitle>
 
       <DialogContent dividers>
@@ -15,7 +19,7 @@ export default function ChatDialog({ open, onClose, requestId }) {
 
       <DialogActions>
         <Button onClick={onClose} variant="contained" color="inherit">
-          Close
+          {t('Close')}
         </Button>
       </DialogActions>
     </Dialog>

@@ -1,4 +1,5 @@
 import { merge } from 'es-toolkit';
+import { useTranslation } from 'react-i18next';
 import { useBoolean } from 'minimal-shared/hooks';
 
 import Box from '@mui/material/Box';
@@ -30,6 +31,7 @@ import { MainSection, layoutClasses, HeaderSection, LayoutSection } from '../cor
 
 export function DashboardLayout({ sx, cssVars, children, slotProps, layoutQuery = 'lg' }) {
   const theme = useTheme();
+  const {t} = useTranslation()
 
   const { user } = useMockedUser();
 
@@ -38,8 +40,10 @@ export function DashboardLayout({ sx, cssVars, children, slotProps, layoutQuery 
   const navVars = dashboardNavColorVars(theme, settings.state.navColor, settings.state.navLayout);
 
   const { value: open, onFalse: onClose, onTrue: onOpen } = useBoolean();
+  // t is used for tranlsation 
+  // passed translation keywords to the navData
+  const navData = slotProps?.nav?.data ?? dashboardNavData(t);
 
-  const navData = slotProps?.nav?.data ?? dashboardNavData;
 
   const isNavMini = settings.state.navLayout === 'mini';
   const isNavHorizontal = settings.state.navLayout === 'horizontal';
@@ -122,10 +126,9 @@ export function DashboardLayout({ sx, cssVars, children, slotProps, layoutQuery 
           <LanguagePopover
             data={[
               { value: 'en', label: 'English', countryCode: 'US' },
-              { value: 'fr', label: 'Dari', countryCode: 'AF' },
-              { value: 'vi', label: 'Pashto', countryCode: 'AF' },
-              // { value: 'cn', label: 'Chinese', countryCode: 'CN' },
-              // { value: 'ar', label: 'Arabic', countryCode: 'SA' },
+              { value: 'fa', label: 'Dari', countryCode: 'AF' },
+              { value: 'ps', label: 'Pashto', countryCode: 'AF' },
+      
             ]}
           />
 
@@ -171,6 +174,7 @@ export function DashboardLayout({ sx, cssVars, children, slotProps, layoutQuery 
         )
       }
     />
+    
   );
 
   const renderFooter = () => null;

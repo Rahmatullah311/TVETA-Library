@@ -1,4 +1,6 @@
 import 'src/global.css';
+// 🔑 IMPORTANT: initialize i18n ONCE
+import 'src/localization/i18';
 
 import { useEffect } from 'react';
 
@@ -8,7 +10,11 @@ import { themeConfig, ThemeProvider } from 'src/theme';
 
 import { ProgressBar } from 'src/components/progress-bar';
 import { MotionLazy } from 'src/components/animate/motion-lazy';
-import { SettingsDrawer, defaultSettings, SettingsProvider } from 'src/components/settings';
+import {
+  SettingsDrawer,
+  defaultSettings,
+  SettingsProvider,
+} from 'src/components/settings';
 
 import { AuthProvider } from 'src/auth/context/jwt';
 

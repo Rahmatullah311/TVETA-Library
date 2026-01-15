@@ -2,6 +2,7 @@
 
 import { Link } from 'react-router';
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import {
   Table,
@@ -26,6 +27,7 @@ import ChatDialog from './chat/ChatDialog';
 
 
 export default function RequestTable() {
+  const { t } = useTranslation();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -198,7 +200,7 @@ export default function RequestTable() {
         <div>
           {requests.some((r) => r.is_provider) && (
             <TextField
-              label="Search Serial Number"
+              label={t('SearchSerialNumber')}
               variant="outlined"
               size="small"
               value={search}
@@ -209,10 +211,10 @@ export default function RequestTable() {
         </div>
         <div style={{ display: 'flex', gap: '8px' }}>
           <Button variant="outlined" onClick={fetchRequests}>
-            Refresh
+            {t('refresh')}
           </Button>
           <Button component={Link} to="/dashboard/services" variant="contained">
-            New Request
+            {t('NEWRequests')}
           </Button>
         </div>
       </div>
@@ -231,15 +233,15 @@ export default function RequestTable() {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>Description</TableCell>
-                <TableCell>Service</TableCell>
-                <TableCell>Created By</TableCell>
-                <TableCell>Priority</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Serial Number</TableCell>
+                <TableCell>{t('ID')}</TableCell>
+                <TableCell>{t('Description')}</TableCell>
+                <TableCell>{t('Services')}</TableCell>
+                <TableCell>{t('Created By')}</TableCell>
+                <TableCell>{t('Priority')}</TableCell>
+                <TableCell>{t('Status')}</TableCell>
+                <TableCell>{t('serialnumber')}</TableCell>
                 {/* <TableCell>Files</TableCell> */}
-                <TableCell>Created At</TableCell>
+                <TableCell>{t('created_at')}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -293,11 +295,11 @@ export default function RequestTable() {
             alignItems: 'center',
           }}
         >
-          <Typography variant="h6">Request Details</Typography>
+          <Typography variant="h6">{t('RequestDetails')}</Typography>
 
          
             <Button variant="contained" size="small" onClick={() => setChatOpen(true)}>
-              Chat 
+              {t('Chat')} 
             </Button>
        
         </DialogTitle>
@@ -311,25 +313,25 @@ export default function RequestTable() {
         <DialogContent dividers>
           {selectedRequest ? (
             <>
-              <Detail label="ID" value={selectedRequest.id} />
-              <Detail label="Description" value={selectedRequest.description} />
-              <Detail label="Created By" value={selectedRequest.created_by_username} />
+              <Detail label={t('ID')} value={selectedRequest.id} />
+              <Detail label={t('Description')} value={selectedRequest.description} />
+              <Detail label={t('Created By')} value={selectedRequest.created_by_username} />
               <Detail
-                label="Provider"
+                label={t('ServiceProvider')}
                 value={selectedRequest.provider_username || 'Not assigned'}
               />
               <Detail
-                label="Priority"
+                label={t('Priority')}
                 value={capitalize(selectedRequest.priority)}
                 color={priorityColors[selectedRequest.priority]}
               />
               <Detail
-                label="Status"
+                label={t('Status')}
                 value={capitalize(selectedRequest.status)}
                 color={statusColors[selectedRequest.status]}
               />
               <Detail
-                label="Created At"
+                label={t('created_at')}
                 value={new Date(selectedRequest.created_at).toLocaleString()}
               />
 
@@ -344,7 +346,7 @@ export default function RequestTable() {
                     gap: '16px',
                   }}
                 >
-                  <strong>Serial Number:</strong>
+                  <strong>{t('serialnumber')}</strong>
                   <TextField
                     size="small"
                     variant="outlined"
@@ -352,7 +354,7 @@ export default function RequestTable() {
                     onChange={(e) =>
                       setSelectedRequest({ ...selectedRequest, serial_number: e.target.value })
                     }
-                    placeholder="Enter serial number"
+                    placeholder={t('Enterserialnumber')}
                     sx={{ width: '200px' }}
                   />
                 </div>
@@ -364,7 +366,7 @@ export default function RequestTable() {
               {selectedRequest.is_provider && (
                 <div style={{ marginTop: '16px' }}>
                   <Button variant="outlined" component="label">
-                    Upload File
+                    {t('UploadFile')}
                     <input type="file" hidden onChange={handleFileSelect} />
                   </Button>
 
@@ -375,7 +377,7 @@ export default function RequestTable() {
                       sx={{ ml: 2 }}
                       onClick={handleSaveFiles}
                     >
-                      Save Files
+                      {t('savefiles')}
                     </Button>
                   )}
 
@@ -395,37 +397,37 @@ export default function RequestTable() {
               )}
             </>
           ) : (
-            <Typography align="center">Loading...</Typography>
+            <Typography align="center">{t('Loading')}</Typography>
           )}
         </DialogContent>
 
         <DialogActions sx={{ justifyContent: 'space-between' }}>
           {selectedRequest?.is_provider && (
             <Button onClick={handleSaveSerial} variant="contained" color="primary">
-              Save Serial Number
+              {t('SaveSerialNumber')}
             </Button>
           )}
 
           {selectedRequest && canUserOccupy(selectedRequest) && (
             <Button onClick={handleOccupyTask} variant="contained" color="secondary">
-              Occupy Task
+              {t('OccupyTask')}
             </Button>
           )}
 
           {selectedRequest && canUserComplete(selectedRequest) && (
             <Button onClick={handleCompleteTask} variant="contained" color="warning">
-              Mark as Completed
+              {t('MarkasCompleted')}
             </Button>
           )}
 
           {selectedRequest && canUserApprove(selectedRequest) && (
             <Button onClick={handleApproveDelivery} variant="contained">
-              Approve Delivery
+              {t('ApproveDelivery')}
             </Button>
           )}
 
           <Button onClick={handleClose} variant="contained" color="inherit">
-            Close
+            {t('Close')}
           </Button>
         </DialogActions>
       </Dialog>

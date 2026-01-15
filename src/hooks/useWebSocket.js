@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
 
+// this hook is used for notification
 export const useWebSocket = (token) => {
   const [notifications, setNotifications] = useState([]);
   const [isConnected, setIsConnected] = useState(false);

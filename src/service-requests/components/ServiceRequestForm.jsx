@@ -1,12 +1,24 @@
 import { toast } from 'react-toastify';
 // ServiceRequestForm.jsx
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import {Alert,Stack,Dialog,Button,TextField,Typography,DialogTitle,DialogContent,DialogActions,} from '@mui/material';
+import {
+  Alert,
+  Stack,
+  Dialog,
+  Button,
+  TextField,
+  Typography,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from '@mui/material';
 
 import { useAuth } from 'src/auth/context/auth-context.jsx';
 
 export function ServiceRequestForm({ open, onClose, serviceId, serviceTitle, onSubmit }) {
+  const { t } = useTranslation();
   const { user, loading: authLoading } = useAuth();
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState('medium');
@@ -43,35 +55,35 @@ export function ServiceRequestForm({ open, onClose, serviceId, serviceTitle, onS
 
       console.log('Submission result:', result); // Debug logging
 
-      if (result.status === 201){
+      if (result.status === 201) {
         toast.success('Service request submitted successfully!');
         onClose();
-      }else{
+      } else {
         setError(result.error || 'Something  wrong.');
       }
-    }catch (err) {
+    } catch (err) {
       console.error(err);
       setError(err.message || 'Something went wrong.');
-    }finally {
+    } finally {
       setLoading(false);
     }
   };
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>Request Service</DialogTitle>
+      <DialogTitle>{t('title')}</DialogTitle>
 
       <DialogContent>
         {serviceTitle && (
           <Typography sx={{ mb: 1 }} color="text.secondary">
-            Service: <strong>{serviceTitle}</strong>
+            {t('serviceLabel')}: <strong>{serviceTitle}</strong>
           </Typography>
         )}
 
         {error && <Alert severity="error">{error}</Alert>}
 
         <TextField
-          label="Describe your Issue here..."
+          label={t('descriptionPlaceholder')}
           multiline
           rows={4}
           fullWidth
@@ -81,7 +93,7 @@ export function ServiceRequestForm({ open, onClose, serviceId, serviceTitle, onS
           onChange={(e) => setDescription(e.target.value)}
         />
 
-        <Typography sx={{ mt: 2, mb: 1 }}>Select Priority:</Typography>
+        <Typography sx={{ mt: 2, mb: 1 }}>{t('priorityLabel')}</Typography>
         <Stack direction="row" spacing={2}>
           {['low', 'medium', 'high', 'urgent'].map((level) => (
             <Button
@@ -98,7 +110,7 @@ export function ServiceRequestForm({ open, onClose, serviceId, serviceTitle, onS
               }
               onClick={() => setPriority(level)}
             >
-              {level}
+              {t(level)}
             </Button>
           ))}
         </Stack>
@@ -106,17 +118,16 @@ export function ServiceRequestForm({ open, onClose, serviceId, serviceTitle, onS
 
       <DialogActions>
         <Button onClick={onClose} disabled={loading}>
-          Cancel
+          {t('cancel')}
         </Button>
         <Button
           variant="contained"
           onClick={handleSubmit}
           disabled={loading || !description.trim() || authLoading}
         >
-          {loading ? 'Submitting...' : 'Submit'}
+          {loading ? t('submitting') : t('submit')}
         </Button>
       </DialogActions>
     </Dialog>
   );
 }
-

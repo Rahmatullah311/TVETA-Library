@@ -1,10 +1,12 @@
 import { m } from 'framer-motion';
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react'; 
 import { usePopover } from 'minimal-shared/hooks';
 
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
+
+import i18n from 'src/localization/i18';
 
 import { FlagIcon } from 'src/components/flag-icon';
 import { CustomPopover } from 'src/components/custom-popover';
@@ -19,13 +21,15 @@ export function LanguagePopover({ data = [], sx, ...other }) {
 
   const currentLang = data.find((lang) => lang.value === locale);
 
-  const handleChangeLang = useCallback(
-    (lang) => {
-      setLocale(lang);
-      onClose();
-    },
-    [onClose]
-  );
+ const handleChangeLang = useCallback(
+  (lang) => {
+    setLocale(lang);      // update the popover selection
+    i18n.changeLanguage(lang);  // change the app language
+    onClose();
+  },
+  [onClose]
+);
+
 
   const renderMenuList = () => (
     <CustomPopover open={open} anchorEl={anchorEl} onClose={onClose}>

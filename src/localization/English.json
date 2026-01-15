@@ -5,7 +5,9 @@
   "Overview": "Overview",
   "Dashboard": "Dashboard",
   "Requests": "Requests",
+  "SearchSerialNumber" : "Search Serial Number",
   "Services": "Services",
+  "refresh": "Refresh",
   "ServiceProvider": "Service Provider",
   "RequestOverview": "Request Overview",
   "NEWRequests": "NEW Requests",
@@ -26,6 +28,7 @@
   "Description": "Description",
   "Created By": "Created By",
   "Priority": "Priority",
+  "UploadFile": "Upload File",
   "Status": "Status",
   "newRequest": "new Request",
   "RequestDetails": "Request Details",
@@ -34,7 +37,8 @@
   "ApproveDelivery": "Approve Delivery",
   "Close": "Close",
   "Loading": "Loading...",
-
+  "SaveSerialNumber": "Save Serial Number",
+   "Chat": "Chat",
   "title": "Request Service",
   "serviceLabel": "Service",
   "descriptionPlaceholder": "Describe your Issue here...",
@@ -44,9 +48,10 @@
   "medium": "Medium",
   "high": "High",
   "urgent": "Urgent",
-
+  "Typeamessage…" : "Type a message…",
   "cancel": "Cancel",
   "submit": "Submit",
+  "Chat—Request" : "Chat — Request:",
   "submitting": "Submitting...",
 
   "descriptionEmpty": "Description cannot be empty.",
@@ -100,5 +105,59 @@
   "serviceFormDialog_descriptionRequiredError": "Description is required",
   "servicesListView_noServices": "No services available",
   "servicesListView_selectService": "Select a service to request",
-  "servicesListView_loading": "Loading services..."
+  "servicesListView_loading": "Loading services...",
+  "serialnumber" : "Serial Number",
+  "created_at" : "Created At",
+  "Enterserialnumber": "Enter serial number",
+  "savefiles": "Save Files",
+ 
+  "Notifications": "Notifications",
+  "NotificationAll": "All",
+  "NotificationUnread": "Unread",
+  "MarkAllAsRead": "Mark all as read",
+  "NoNotifications": "No notifications",
+
+   "UserName": "User Name",
+  "Password": "Password",
+  "ForgotPassword": "Forgot password?",
+  "PasswordPlaceholder": "6+ characters",
+  "SignIn": "Sign in",
+  "SigningIn": "Sign in...",
+  "SignInTitle": "Sign in to your account",
+  "NoAccount": "Don’t have an account?",
+  "GetStarted": "Get started",
+  "UseCredentials": "Use ",
+  "WithPassword": " with password ",
+"ChooseService": "Choose the service you need",
+  "UserNameRequired": "User Name is required!",
+  "UserNameInvalid": "User Name must be a valid user name!",
+  "PasswordRequired": "Password is required!",
+  "PasswordMinLength": "Password must be at least 6 characters!",
+  
+  "FirstName": "First name",
+  "LastName": "Last name",
+  "EmailAddress": "Email address",
+  "Password": "Password",
+  "PasswordPlaceholder": "6+ characters",
+
+  "CreateAccount": "Create account",
+  "CreatingAccount": "Create account...",
+
+  "SignUpTitle": "Get started absolutely free",
+  "AlreadyHaveAccount": "Already have an account?",
+  "SignIn": "Sign in",
+
+  "FirstNameRequired": "First name is required!",
+  "LastNameRequired": "Last name is required!",
+  "EmailRequired": "Email is required!",
+  "EmailInvalid": "Email must be a valid email address!",
+  "PasswordRequired": "Password is required!",
+  "PasswordMinLength": "Password must be at least 6 characters!"
+
+
+
+
+
 }
+
+

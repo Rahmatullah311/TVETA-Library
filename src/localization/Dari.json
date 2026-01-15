@@ -100,5 +100,84 @@
   "serviceFormDialog_descriptionRequiredError": "توضیحات ضروری است",
   "servicesListView_noServices": "خدمتی موجود نیست",
   "servicesListView_selectService": "یک خدمت برای درخواست انتخاب کنید",
-  "servicesListView_loading": "در حال بارگذاری خدمات..."
+  "servicesListView_loading": "در حال بارگذاری خدمات...",
+  "serialnumber" : "شماره سریال",
+  "created_at" : "ایجاد شده در",
+  "Chat": "چت",
+  "UploadFile": "بارگذاری فایل",
+  "Enterserialnumber": "وارد کردن شماره سریال",
+  "savefiles": "ذخیره فایل‌ها",
+  "SaveSerialNumber": "ذخیره شماره سریال",
+  "Chat—Request" : "چت — درخواست:",
+  "Typeamessage…" : "پیامی تایپ کنید…",
+  "SearchSerialNumber" : "جستجوی شماره سریال",
+  
+  "Notifications": "اعلان‌ها",
+  "NotificationAll": "همه",
+  "NotificationUnread": "خوانده‌نشده",
+  "MarkAllAsRead": "علامت‌گذاری همه به‌عنوان خوانده‌شده",
+  "NoNotifications": "هیچ اعلانی وجود ندارد",
+  
+  "UserName": "نام کاربری",
+  "Password": "رمز عبور",
+  "ForgotPassword": "رمز عبور را فراموش کرده‌اید؟",
+  "PasswordPlaceholder": "حداقل ۶ کاراکتر",
+  "SignIn": "ورود",
+  "SigningIn": "در حال ورود...",
+  "SignInTitle": "به حساب خود وارد شوید",
+  "NoAccount": "حساب کاربری ندارید؟",
+  "GetStarted": "شروع کنید",
+  "UseCredentials": "استفاده کنید از ",
+  "WithPassword": " با رمز عبور ",
+
+  "UserNameRequired": "نام کاربری الزامی است!",
+  "UserNameInvalid": "نام کاربری معتبر نیست!",
+  "PasswordRequired": "رمز عبور الزامی است!",
+  "PasswordMinLength": "رمز عبور باید حداقل ۶ کاراکتر باشد!",
+"ChooseService": "خدمتی را که نیاز دارید انتخاب کنید",
+  
+  "FirstName": "نام",
+  "LastName": "نام خانوادگی",
+  "EmailAddress": "آدرس ایمیل",
+  "Password": "رمز عبور",
+  "PasswordPlaceholder": "حداقل ۶ کاراکتر",
+
+  "CreateAccount": "ایجاد حساب",
+  "CreatingAccount": "در حال ایجاد حساب...",
+
+  "SignUpTitle": "به‌صورت رایگان شروع کنید",
+  "AlreadyHaveAccount": "از قبل حساب دارید؟",
+  "SignIn": "ورود",
+
+  "FirstNameRequired": "نام الزامی است!",
+  "LastNameRequired": "نام خانوادگی الزامی است!",
+  "EmailRequired": "ایمیل الزامی است!",
+  "EmailInvalid": "ایمیل معتبر نیست!",
+  "PasswordRequired": "رمز عبور الزامی است!",
+  "PasswordMinLength": "رمز عبور باید حداقل ۶ کاراکتر باشد!",
+  "FirstName": "نام",
+  "LastName": "نام خانوادگی",
+  "EmailAddress": "آدرس ایمیل",
+  "Password": "رمز عبور",
+  "PasswordPlaceholder": "حداقل ۶ کاراکتر",
+
+  "CreateAccount": "ایجاد حساب",
+  "CreatingAccount": "در حال ایجاد حساب...",
+
+  "SignUpTitle": "اکنون  شروع کنید",
+  "AlreadyHaveAccount": "از قبل حساب دارید؟",
+  "SignIn": "ورود",
+
+  "FirstNameRequired": "نام الزامی است!",
+  "LastNameRequired": "نام خانوادگی الزامی است!",
+  "EmailRequired": "ایمیل الزامی است!",
+  "EmailInvalid": "ایمیل معتبر نیست!",
+  "PasswordRequired": "رمز عبور الزامی است!",
+  "PasswordMinLength": "رمز عبور باید حداقل ۶ کاراکتر باشد!"
+
+
+
+
+
+
 }

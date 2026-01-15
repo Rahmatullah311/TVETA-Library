@@ -1,6 +1,7 @@
 import { z as zod } from 'zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { useBoolean } from 'minimal-shared/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -27,27 +28,25 @@ import { SignUpTerms } from '../../components/sign-up-terms';
 // ----------------------------------------------------------------------
 
 export const SignUpSchema = zod.object({
-  firstName: zod.string().min(1, { message: 'First name is required!' }),
-  lastName: zod.string().min(1, { message: 'Last name is required!' }),
+  firstName: zod.string().min(1, { message: 'FirstNameRequired' }),
+  lastName: zod.string().min(1, { message: 'LastNameRequired' }),
   email: zod
     .string()
-    .min(1, { message: 'Email is required!' })
-    .email({ message: 'Email must be a valid email address!' }),
+    .min(1, { message: 'EmailRequired' })
+    .email({ message: 'EmailInvalid' }),
   password: zod
     .string()
-    .min(1, { message: 'Password is required!' })
-    .min(6, { message: 'Password must be at least 6 characters!' }),
+    .min(1, { message: 'PasswordRequired' })
+    .min(6, { message: 'PasswordMinLength' }),
 });
 
 // ----------------------------------------------------------------------
 
 export function JwtSignUpView() {
+  const { t } = useTranslation();
   const router = useRouter();
-
   const showPassword = useBoolean();
-
   const { checkUserSession } = useAuthContext();
-
   const [errorMessage, setErrorMessage] = useState(null);
 
   const defaultValues = {
@@ -69,7 +68,6 @@ export function JwtSignUpView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-     
       await signUp({
         email: data.email,
         password: data.password,
@@ -77,10 +75,8 @@ export function JwtSignUpView() {
         lastName: data.lastName,
       });
       await checkUserSession?.();
-
       router.refresh();
     } catch (error) {
-      console.error(error);
       const feedbackMessage = getErrorMessage(error);
       setErrorMessage(feedbackMessage);
     }
@@ -93,22 +89,26 @@ export function JwtSignUpView() {
       >
         <Field.Text
           name="firstName"
-          label="First name"
+          label={t('FirstName')}
           slotProps={{ inputLabel: { shrink: true } }}
         />
         <Field.Text
           name="lastName"
-          label="Last name"
+          label={t('LastName')}
           slotProps={{ inputLabel: { shrink: true } }}
         />
       </Box>
 
-      <Field.Text name="email" label="Email address" slotProps={{ inputLabel: { shrink: true } }} />
+      <Field.Text
+        name="email"
+        label={t('EmailAddress')}
+        slotProps={{ inputLabel: { shrink: true } }}
+      />
 
       <Field.Text
         name="password"
-        label="Password"
-        placeholder="6+ characters"
+        label={t('Password')}
+        placeholder={t('PasswordPlaceholder')}
         type={showPassword.value ? 'text' : 'password'}
         slotProps={{
           inputLabel: { shrink: true },
@@ -116,7 +116,9 @@ export function JwtSignUpView() {
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton onClick={showPassword.onToggle} edge="end">
-                  <Iconify icon={showPassword.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
+                  <Iconify
+                    icon={showPassword.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'}
+                  />
                 </IconButton>
               </InputAdornment>
             ),
@@ -131,9 +133,9 @@ export function JwtSignUpView() {
         type="submit"
         variant="contained"
         loading={isSubmitting}
-        loadingIndicator="Create account..."
+        loadingIndicator={t('CreatingAccount')}
       >
-        Create account
+        {t('CreateAccount')}
       </Button>
     </Box>
   );
@@ -141,12 +143,12 @@ export function JwtSignUpView() {
   return (
     <>
       <FormHead
-        title="Get started absolutely free"
+        title={t('SignUpTitle')}
         description={
           <>
-            {`Already have an account? `}
+            {t('AlreadyHaveAccount')}{' '}
             <Link component={RouterLink} href={paths.auth.jwt.signIn} variant="subtitle2">
-              Get started
+              {t('SignIn')}
             </Link>
           </>
         }
