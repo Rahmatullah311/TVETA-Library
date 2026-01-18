@@ -49,6 +49,12 @@ export const requestsApi = {
     }),
 
   delete: (id) => serviceRequestApi.delete(`requests/${id}/`),
+
+  exportExcel: (params) =>
+    serviceRequestApi.get('requests/export_excel/', {
+      params,
+      responseType: 'blob', // important for Excel download
+    }),
 };
 
 // backward compatible named export

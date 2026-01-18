@@ -158,10 +158,11 @@
   "Delete" : "Delete",
   "RejectTask": "Reject Task",
   "CompletedBy": "Completed By",
-  "EnterCompletionComment": "Enter comment (who completed it)"
-
-
-
+  "EnterCompletionComment": "Enter comment (who completed it)",
+  "End Date ": "End Date",
+  "Start Date": "Start Date",
+  "Export Excel": "Export to Excel",
+  "Filters": "Filter"
 
 
 

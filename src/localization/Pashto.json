@@ -156,7 +156,11 @@
   "Delete": "حذف کول",
   "RejectTask": "دنده رد کړئ",
   "CompletedBy": "بشپړ شوی لخوا",
-  "EnterCompletionComment": "تبصره دننه کړئ (چا بشپړ کړ)"
+  "EnterCompletionComment": "تبصره دننه کړئ (چا بشپړ کړ)",
+   "End Date": "د پای نېټه",
+  "Start Date": "د پیل نېټه",
+  "Export Excel": "ایکسېل ته صادرول",
+  "Filters": "فلټرونه"
 
 
 

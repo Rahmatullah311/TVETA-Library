@@ -35,6 +35,8 @@ export default function RequestTable() {
   const [search, setSearch] = useState('');
   const [chatOpen, setChatOpen] = useState(false);
   const [completedByText, setCompletedByText] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   useEffect(() => {
     fetchRequests();
@@ -43,7 +45,10 @@ export default function RequestTable() {
   const fetchRequests = async () => {
     try {
       setLoading(true);
-      const response = await requestsApi.getAll();
+      const response = await requestsApi.getAll({
+        start_date: startDate || undefined,
+        end_date: endDate || undefined,
+      });
       const sorted = response.data.sort((a, b) => b.id - a.id);
       setRequests(sorted);
     } catch (err) {
@@ -74,6 +79,26 @@ export default function RequestTable() {
       setModalOpen(true);
     } catch (err) {
       console.error('Error fetching request:', err);
+    }
+  };
+
+  const handleExportExcel = async () => {
+    try {
+      const response = await requestsApi.exportExcel({
+        start_date: startDate || undefined,
+        end_date: endDate || undefined,
+      });
+
+      const blob = new Blob([response.data], { type: response.headers['content-type'] });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'service_requests.xlsx');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err) {
+      console.error('Failed to export Excel:', err);
     }
   };
 
@@ -195,27 +220,24 @@ export default function RequestTable() {
     }
   };
 
-const handleRejectTask = async () => {
-  console.log('REJECT CLICKED', selectedRequest);
+  const handleRejectTask = async () => {
+    console.log('REJECT CLICKED', selectedRequest);
 
-  if (!selectedRequest) return;
+    if (!selectedRequest) return;
 
-  try {
-    const updated = await requestsApi.update(selectedRequest.id, {
-      status: 'rejected',
-    });
+    try {
+      const updated = await requestsApi.update(selectedRequest.id, {
+        status: 'rejected',
+      });
 
-    console.log('REJECT RESPONSE:', updated.data);
+      console.log('REJECT RESPONSE:', updated.data);
 
-    setSelectedRequest(updated.data);
-    setRequests((prev) =>
-      prev.map((r) => (r.id === updated.data.id ? updated.data : r))
-    );
-  } catch (err) {
-    console.error('Failed to reject task:', err);
-  }
-};
-
+      setSelectedRequest(updated.data);
+      setRequests((prev) => prev.map((r) => (r.id === updated.data.id ? updated.data : r)));
+    } catch (err) {
+      console.error('Failed to reject task:', err);
+    }
+  };
 
   const handleClose = () => {
     setModalOpen(false);
@@ -272,6 +294,39 @@ const handleRejectTask = async () => {
             />
           )}
         </div>
+    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+  {requests.some((r) => r.is_provider) && (
+    <>
+      <TextField
+        label={t('Start Date')}
+        type="date"
+        size="small"
+        value={startDate}
+        onChange={(e) => setStartDate(e.target.value)}
+        InputLabelProps={{ shrink: true }}
+      />
+
+      <TextField
+        label={t('End Date')}
+        type="date"
+        size="small"
+        value={endDate}
+        onChange={(e) => setEndDate(e.target.value)}
+        InputLabelProps={{ shrink: true }}
+      />
+
+      <Button variant="contained" size="small" onClick={fetchRequests}>
+        {t('Filters')}
+      </Button>
+
+      <Button variant="contained" size="small" color="success" onClick={handleExportExcel}>
+        {t('Export Excel')}
+      </Button>
+    </>
+  )}
+</div>
+
+
         <div style={{ display: 'flex', gap: '8px' }}>
           <Button variant="outlined" onClick={fetchRequests}>
             {t('refresh')}
