@@ -36,7 +36,7 @@ export const useWebSocket = (token) => {
       try {
         const data = JSON.parse(event.data);
 
-        // Ignore heartbeat / system messages
+        // Ignore system messages
         if (
           data?.type === 'heartbeat' ||
           data?.type === 'connection_success'
@@ -53,7 +53,7 @@ export const useWebSocket = (token) => {
             isUnRead: true,
             timestamp: data.created_at || new Date().toISOString(),
           },
-          ...prev,
+          ...prev, // ✅ newest first
         ]);
       } catch (err) {
         console.error('WebSocket parse error:', err);
@@ -67,7 +67,6 @@ export const useWebSocket = (token) => {
       clearInterval(heartbeatIntervalRef.current);
       heartbeatIntervalRef.current = null;
 
-      // Auto-reconnect after 5 seconds
       reconnectTimeoutRef.current = setTimeout(connect, 5000);
     };
 

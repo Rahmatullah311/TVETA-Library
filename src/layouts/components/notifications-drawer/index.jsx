@@ -30,8 +30,7 @@ export function NotificationsDrawer({ sx }) {
   const [currentTab, setCurrentTab] = useState('all');
 
   const token = sessionStorage.getItem('jwt_access_token');
-  const { notifications, isConnected, markAsRead, markAllAsRead } =
-    useWebSocket(token);
+  const { notifications, isConnected, markAsRead, markAllAsRead } = useWebSocket(token);
 
   const unreadCount = notifications.filter((n) => n.isUnRead).length;
 
@@ -40,9 +39,7 @@ export function NotificationsDrawer({ sx }) {
   );
 
   const filtered =
-    currentTab === 'unread'
-      ? sortedNotifications.filter((n) => n.isUnRead)
-      : sortedNotifications;
+    currentTab === 'unread' ? sortedNotifications.filter((n) => n.isUnRead) : sortedNotifications;
 
   const handleTabChange = (_, value) => setCurrentTab(value);
 
@@ -53,11 +50,7 @@ export function NotificationsDrawer({ sx }) {
         <Badge badgeContent={unreadCount} color="error">
           <Iconify
             width={24}
-            icon={
-              isConnected
-                ? 'solar:bell-bing-bold-duotone'
-                : 'solar:bell-off-bold-duotone'
-            }
+            icon={isConnected ? 'solar:bell-bing-bold-duotone' : 'solar:bell-off-bold-duotone'}
           />
         </Badge>
       </IconButton>
@@ -88,9 +81,7 @@ export function NotificationsDrawer({ sx }) {
             borderColor: 'divider',
           }}
         >
-          <Typography variant="h6">
-            {t('Notifications')}
-          </Typography>
+          <Typography variant="h6">{t('Notifications')}</Typography>
 
           {unreadCount > 0 && (
             <Tooltip title={t('MarkAllAsRead')}>
@@ -112,15 +103,10 @@ export function NotificationsDrawer({ sx }) {
             <Tab
               key={tab.value}
               value={tab.value}
-              label={t(tab.labelKey)}  
+              label={t(tab.labelKey)}
               icon={
-                <Label
-                  variant="soft"
-                  color={tab.value === 'unread' ? 'info' : 'default'}
-                >
-                  {tab.value === 'all'
-                    ? notifications.length
-                    : unreadCount}
+                <Label variant="soft" color={tab.value === 'unread' ? 'info' : 'default'}>
+                  {tab.value === 'all' ? notifications.length : unreadCount}
                 </Label>
               }
               iconPosition="end"
@@ -132,18 +118,11 @@ export function NotificationsDrawer({ sx }) {
         <Scrollbar sx={{ flex: 1, px: 1 }}>
           <Box component="ul" sx={{ p: 0, m: 0 }}>
             {filtered.length ? (
-              [...filtered].reverse().map((n) => (
-                <NotificationItem
-                  key={n.id}
-                  notification={n}
-                  onClick={() => markAsRead(n.id)}
-                />
+              filtered.map((n) => (
+                <NotificationItem key={n.id} notification={n} onClick={() => markAsRead(n.id)} />
               ))
             ) : (
-              <Typography
-                sx={{ textAlign: 'center', mt: 6 }}
-                color="text.secondary"
-              >
+              <Typography sx={{ textAlign: 'center', mt: 6 }} color="text.secondary">
                 {t('NoNotifications')}
               </Typography>
             )}
