@@ -152,7 +152,14 @@
   "EmailRequired": "Email is required!",
   "EmailInvalid": "Email must be a valid email address!",
   "PasswordRequired": "Password is required!",
-  "PasswordMinLength": "Password must be at least 6 characters!"
+  "PasswordMinLength": "Password must be at least 6 characters!",
+
+  "save" : "Save",
+  "Delete" : "Delete",
+  "RejectTask": "Reject Task",
+  "CompletedBy": "Completed By",
+  "EnterCompletionComment": "Enter comment (who completed it)"
+
 
 
 

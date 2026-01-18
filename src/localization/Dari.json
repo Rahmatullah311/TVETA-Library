@@ -173,7 +173,12 @@
   "EmailRequired": "ایمیل الزامی است!",
   "EmailInvalid": "ایمیل معتبر نیست!",
   "PasswordRequired": "رمز عبور الزامی است!",
-  "PasswordMinLength": "رمز عبور باید حداقل ۶ کاراکتر باشد!"
+  "PasswordMinLength": "رمز عبور باید حداقل ۶ کاراکتر باشد!",
+  "save" : "ذخیره",
+  "Delete" : "حذف",
+  "RejectTask": "رد کردن وظیفه",
+  "CompletedBy": "تکمیل شده توسط",
+  "EnterCompletionComment": "وارد کردن نظر (چه کسی آن را تکمیل کرده است)"
 
 
 

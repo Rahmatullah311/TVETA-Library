@@ -151,7 +151,12 @@
   "EmailRequired": "برېښنالیک اړین دی!",
   "EmailInvalid": "برېښنالیک سم نه دی!",
   "PasswordRequired": "پټنوم اړین دی!",
-  "PasswordMinLength": "پټنوم باید لږ تر لږه ۶ توري ولري!"
+  "PasswordMinLength": "پټنوم باید لږ تر لږه ۶ توري ولري!",
+  "save": "خوندي کول",
+  "Delete": "حذف کول",
+  "RejectTask": "دنده رد کړئ",
+  "CompletedBy": "بشپړ شوی لخوا",
+  "EnterCompletionComment": "تبصره دننه کړئ (چا بشپړ کړ)"
 
 
 

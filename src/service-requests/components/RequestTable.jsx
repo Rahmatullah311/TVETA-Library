@@ -25,7 +25,6 @@ import {
 import { requestsApi } from '../api';
 import ChatDialog from './chat/ChatDialog';
 
-
 export default function RequestTable() {
   const { t } = useTranslation();
   const [requests, setRequests] = useState([]);
@@ -35,6 +34,7 @@ export default function RequestTable() {
   const [modalOpen, setModalOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [chatOpen, setChatOpen] = useState(false);
+  const [completedByText, setCompletedByText] = useState('');
 
   useEffect(() => {
     fetchRequests();
@@ -69,6 +69,7 @@ export default function RequestTable() {
       }
 
       setSelectedRequest(requestData);
+      setCompletedByText(requestData.completed_by || '');
       setRequests((prev) => prev.map((r) => (r.id === requestId ? requestData : r)));
       setModalOpen(true);
     } catch (err) {
@@ -125,7 +126,21 @@ export default function RequestTable() {
     }
   };
 
-  // New file upload handling
+  const handleSaveCompletedBy = async () => {
+    if (!selectedRequest) return;
+
+    try {
+      const updated = await requestsApi.update(selectedRequest.id, {
+        completed_by: completedByText,
+      });
+      setSelectedRequest(updated.data);
+      setRequests((prev) => prev.map((r) => (r.id === updated.data.id ? updated.data : r)));
+    } catch (err) {
+      console.error('Failed to save completion comment:', err);
+    }
+  };
+
+  // File upload handling
   const handleFileSelect = (e) => {
     if (!selectedRequest) return;
     const file = e.target.files[0];
@@ -135,6 +150,7 @@ export default function RequestTable() {
       newFiles: [...(selectedRequest.newFiles || []), file],
     });
   };
+
   const handleSaveFiles = async () => {
     if (!selectedRequest || !selectedRequest.newFiles?.length) return;
 
@@ -157,9 +173,54 @@ export default function RequestTable() {
     }
   };
 
+  const handleRemoveNewFile = (index) => {
+    if (!selectedRequest) return;
+    const updatedFiles = [...(selectedRequest.newFiles || [])];
+    updatedFiles.splice(index, 1);
+    setSelectedRequest({ ...selectedRequest, newFiles: updatedFiles });
+  };
+
+  const handleDeleteFile = async (fileId) => {
+    if (!selectedRequest) return;
+
+    try {
+      await requestsApi.deleteFile(selectedRequest.id, fileId);
+
+      setSelectedRequest((prev) => ({
+        ...prev,
+        files: prev.files.filter((f) => f.id !== fileId),
+      }));
+    } catch (err) {
+      console.error('Failed to delete file:', err);
+    }
+  };
+
+const handleRejectTask = async () => {
+  console.log('REJECT CLICKED', selectedRequest);
+
+  if (!selectedRequest) return;
+
+  try {
+    const updated = await requestsApi.update(selectedRequest.id, {
+      status: 'rejected',
+    });
+
+    console.log('REJECT RESPONSE:', updated.data);
+
+    setSelectedRequest(updated.data);
+    setRequests((prev) =>
+      prev.map((r) => (r.id === updated.data.id ? updated.data : r))
+    );
+  } catch (err) {
+    console.error('Failed to reject task:', err);
+  }
+};
+
+
   const handleClose = () => {
     setModalOpen(false);
     setSelectedRequest(null);
+    setCompletedByText('');
   };
 
   const priorityColors = {
@@ -175,11 +236,13 @@ export default function RequestTable() {
     in_progress: 'orange',
     completed: 'gray',
     approved: 'darkgreen',
+    rejected: 'red',
   };
 
   const canUserComplete = (req) => req?.is_provider && req.status === 'in_progress';
   const canUserApprove = (req) => req?.is_creator && req.status === 'completed';
   const canUserOccupy = (req) => req?.status === 'viewed' && !req?.provider && !req?.is_creator;
+  const canUserReject = (req) => !req?.provider && req.status === 'viewed' && !req?.is_creator;
 
   const filteredRequests = requests.filter((r) =>
     r.serial_number?.toLowerCase().includes(search.toLowerCase())
@@ -239,8 +302,8 @@ export default function RequestTable() {
                 <TableCell>{t('Created By')}</TableCell>
                 <TableCell>{t('Priority')}</TableCell>
                 <TableCell>{t('Status')}</TableCell>
+                <TableCell>{t('CompletedBy')}</TableCell>
                 <TableCell>{t('serialnumber')}</TableCell>
-                {/* <TableCell>Files</TableCell> */}
                 <TableCell>{t('created_at')}</TableCell>
               </TableRow>
             </TableHead>
@@ -262,22 +325,10 @@ export default function RequestTable() {
                   <TableCell style={{ color: statusColors[req.status] }}>
                     {capitalize(req.status)}
                   </TableCell>
+                  <TableCell style={{ color: statusColors[req.status] }}>
+                    {capitalize(req.completed_by)}
+                  </TableCell>
                   <TableCell>{req.serial_number || '-'}</TableCell>
-                  {/* <TableCell>
-                    {req.is_provider && req.files?.length > 0
-                      ? req.files.map((f) => (
-                          <a
-                            key={f.id}
-                            href={f.file}
-                            target="_blank"
-                            rel="noreferrer"
-                            style={{ marginRight: 5 }}
-                          >
-                            {f.file.split('/').pop()}
-                          </a>
-                        ))
-                      : '-'}
-                  </TableCell> */}
                   <TableCell>{new Date(req.created_at).toLocaleString()}</TableCell>
                 </TableRow>
               ))}
@@ -297,11 +348,9 @@ export default function RequestTable() {
         >
           <Typography variant="h6">{t('RequestDetails')}</Typography>
 
-         
-            <Button variant="contained" size="small" onClick={() => setChatOpen(true)}>
-              {t('Chat')} 
-            </Button>
-       
+          <Button variant="contained" size="small" onClick={() => setChatOpen(true)}>
+            {t('Chat')}
+          </Button>
         </DialogTitle>
 
         <ChatDialog
@@ -330,23 +379,20 @@ export default function RequestTable() {
                 value={capitalize(selectedRequest.status)}
                 color={statusColors[selectedRequest.status]}
               />
+
+              <Detail
+                label={t('CompletedBy')}
+                value={capitalize(selectedRequest.completed_by)}
+                color={statusColors[selectedRequest.status]}
+              />
               <Detail
                 label={t('created_at')}
                 value={new Date(selectedRequest.created_at).toLocaleString()}
               />
 
-              {/* Serial Number */}
-              {selectedRequest.is_provider ? (
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '8px 0',
-                    gap: '16px',
-                  }}
-                >
-                  <strong>{t('serialnumber')}</strong>
+              {/* Serial Number with Save button */}
+              {selectedRequest.is_provider && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: 8 }}>
                   <TextField
                     size="small"
                     variant="outlined"
@@ -355,42 +401,111 @@ export default function RequestTable() {
                       setSelectedRequest({ ...selectedRequest, serial_number: e.target.value })
                     }
                     placeholder={t('Enterserialnumber')}
-                    sx={{ width: '200px' }}
+                    sx={{ flex: 1 }}
                   />
+                  <Button
+                    size="small"
+                    variant="contained"
+                    color="primary"
+                    onClick={handleSaveSerial}
+                  >
+                    {t('save')}
+                  </Button>
                 </div>
-              ) : selectedRequest.serial_number ? (
-                <Detail label="Serial Number" value={selectedRequest.serial_number} />
-              ) : null}
+              )}
 
-              {/* Files */}
+              {/* Completed By (Provider Comment) */}
+              {selectedRequest.is_provider && selectedRequest.status === 'in_progress' && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: 8 }}>
+                  <TextField
+                    multiline
+                    minRows={2}
+                    size="small"
+                    variant="outlined"
+                    value={completedByText}
+                    onChange={(e) => setCompletedByText(e.target.value)}
+                    placeholder={t('EnterCompletionComment')}
+                    sx={{ flex: 1 }}
+                  />
+                  <Button
+                    size="small"
+                    variant="contained"
+                    color="secondary"
+                    onClick={handleSaveCompletedBy}
+                  >
+                    {t('save')}
+                  </Button>
+                </div>
+              )}
+
+              {/* File Upload */}
               {selectedRequest.is_provider && (
                 <div style={{ marginTop: '16px' }}>
-                  <Button variant="outlined" component="label">
-                    {t('UploadFile')}
-                    <input type="file" hidden onChange={handleFileSelect} />
-                  </Button>
-
-                  {selectedRequest.newFiles?.length > 0 && (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      sx={{ ml: 2 }}
-                      onClick={handleSaveFiles}
-                    >
-                      {t('savefiles')}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <Button variant="outlined" component="label" size="small">
+                      {t('UploadFile')}
+                      <input type="file" hidden onChange={handleFileSelect} />
                     </Button>
-                  )}
+                    {selectedRequest.newFiles?.length > 0 && (
+                      <Button
+                        size="small"
+                        variant="contained"
+                        color="primary"
+                        onClick={handleSaveFiles}
+                      >
+                        {t('save')}
+                      </Button>
+                    )}
+                  </div>
 
-                  <ul style={{ marginTop: '8px' }}>
+                  {/* Files List */}
+                  <ul style={{ marginTop: 8, paddingLeft: 0, listStyle: 'none' }}>
+                    {/* Existing files */}
                     {(selectedRequest.files || []).map((f) => (
-                      <li key={f.id}>
+                      <li
+                        key={f.id}
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          marginBottom: 4,
+                        }}
+                      >
                         <a href={f.file} target="_blank" rel="noreferrer">
                           {f.file.split('/').pop()}
                         </a>
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          color="error"
+                          onClick={() => handleDeleteFile(f.id)}
+                        >
+                          {t('Delete')}
+                        </Button>
                       </li>
                     ))}
+
+                    {/* New files (not uploaded yet) */}
                     {(selectedRequest.newFiles || []).map((f, i) => (
-                      <li key={i}>{f.name} (new)</li>
+                      <li
+                        key={i}
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          marginBottom: 4,
+                        }}
+                      >
+                        <span>{f.name} (new)</span>
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          color="error"
+                          onClick={() => handleRemoveNewFile(i)}
+                        >
+                          {t('Delete')}
+                        </Button>
+                      </li>
                     ))}
                   </ul>
                 </div>
@@ -401,32 +516,36 @@ export default function RequestTable() {
           )}
         </DialogContent>
 
-        <DialogActions sx={{ justifyContent: 'space-between' }}>
-          {selectedRequest?.is_provider && (
-            <Button onClick={handleSaveSerial} variant="contained" color="primary">
-              {t('SaveSerialNumber')}
-            </Button>
-          )}
-
+        <DialogActions sx={{ justifyContent: 'flex-end', gap: 1 }}>
+          {/* Occupy Task */}
           {selectedRequest && canUserOccupy(selectedRequest) && (
-            <Button onClick={handleOccupyTask} variant="contained" color="secondary">
+            <Button onClick={handleOccupyTask} variant="contained" color="secondary" size="small">
               {t('OccupyTask')}
             </Button>
           )}
 
+          {/* Reject Task */}
+          {selectedRequest && canUserReject(selectedRequest) && (
+            <Button onClick={handleRejectTask} variant="contained" color="error" size="small">
+              {t('RejectTask')}
+            </Button>
+          )}
+
+          {/* Complete Task */}
           {selectedRequest && canUserComplete(selectedRequest) && (
-            <Button onClick={handleCompleteTask} variant="contained" color="warning">
+            <Button onClick={handleCompleteTask} variant="contained" color="warning" size="small">
               {t('MarkasCompleted')}
             </Button>
           )}
 
+          {/* Approve Delivery */}
           {selectedRequest && canUserApprove(selectedRequest) && (
-            <Button onClick={handleApproveDelivery} variant="contained">
+            <Button onClick={handleApproveDelivery} variant="contained" size="small">
               {t('ApproveDelivery')}
             </Button>
           )}
 
-          <Button onClick={handleClose} variant="contained" color="inherit">
+          <Button onClick={handleClose} variant="outlined" color="inherit" size="small">
             {t('Close')}
           </Button>
         </DialogActions>
