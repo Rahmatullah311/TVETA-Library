@@ -3,6 +3,8 @@
 import { Link } from 'react-router';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import DatePicker from 'react-multi-date-picker';
+import persian from 'react-date-object/calendars/persian';
 
 import {
   Table,
@@ -38,6 +40,24 @@ export default function RequestTable() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
+const persian_af = {
+  months: [
+    "حمل", "ثور", "جوزا", "سرطان",
+    "اسد", "سنبله", "میزان", "عقرب",
+    "قوس", "جدی", "دلو", "حوت"
+  ],
+
+  monthsShort: [
+    "حمل", "ثور", "جوزا", "سرطان",
+    "اسد", "سنبله", "میزان", "عقرب",
+    "قوس", "جدی", "دلو", "حوت"
+  ],
+  weekDays: ["یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه", "شنبه"],
+  digits: ["0","1","2","3","4","5","6","7","8","9"],
+};
+
+  
+
   useEffect(() => {
     fetchRequests();
   }, []);
@@ -45,10 +65,12 @@ export default function RequestTable() {
   const fetchRequests = async () => {
     try {
       setLoading(true);
+
       const response = await requestsApi.getAll({
-        start_date: startDate || undefined,
-        end_date: endDate || undefined,
+        start_date: startDate ? startDate.toDate().toISOString().slice(0, 10) : undefined,
+        end_date: endDate ? endDate.toDate().toISOString().slice(0, 10) : undefined,
       });
+
       const sorted = response.data.sort((a, b) => b.id - a.id);
       setRequests(sorted);
     } catch (err) {
@@ -294,38 +316,58 @@ export default function RequestTable() {
             />
           )}
         </div>
-    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-  {requests.some((r) => r.is_provider) && (
-    <>
-      <TextField
-        label={t('Start Date')}
-        type="date"
-        size="small"
-        value={startDate}
-        onChange={(e) => setStartDate(e.target.value)}
-        InputLabelProps={{ shrink: true }}
-      />
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          {requests.some((r) => r.is_provider) && (
+            <>
+              {/* Start Date */}
+              <DatePicker
+                calendar={persian}
+                locale={persian_af}
+                value={startDate}
+                onChange={setStartDate}
+                format="YYYY/MM/DD"
+                render={(value, openCalendar) => (
+                  <TextField
+                    label={t('Start Date')}
+                    size="small"
+                    value={value}
+                    onClick={openCalendar}
+                    inputProps={{ readOnly: true }}
+                    InputLabelProps={{ shrink: true }}
+                    fullWidth
+                  />
+                )}
+              />
 
-      <TextField
-        label={t('End Date')}
-        type="date"
-        size="small"
-        value={endDate}
-        onChange={(e) => setEndDate(e.target.value)}
-        InputLabelProps={{ shrink: true }}
-      />
+              {/* End Date */}
+              <DatePicker
+                calendar={persian}
+                locale={persian_af}
+                value={endDate}
+                onChange={setEndDate}
+                format="YYYY/MM/DD"
+                render={(value, openCalendar) => (
+                  <TextField
+                    label={t('End Date')}
+                    size="small"
+                    value={value}
+                    onClick={openCalendar}
+                    inputProps={{ readOnly: true }}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                )}
+              />
 
-      <Button variant="contained" size="small" onClick={fetchRequests}>
-        {t('Filters')}
-      </Button>
+              <Button variant="contained" size="small" onClick={fetchRequests}>
+                {t('Filters')}
+              </Button>
 
-      <Button variant="contained" size="small" color="success" onClick={handleExportExcel}>
-        {t('Export Excel')}
-      </Button>
-    </>
-  )}
-</div>
-
+              <Button variant="contained" size="small" color="success" onClick={handleExportExcel}>
+                {t('Export Excel')}
+              </Button>
+            </>
+          )}
+        </div>
 
         <div style={{ display: 'flex', gap: '8px' }}>
           <Button variant="outlined" onClick={fetchRequests}>
@@ -384,7 +426,13 @@ export default function RequestTable() {
                     {capitalize(req.completed_by)}
                   </TableCell>
                   <TableCell>{req.serial_number || '-'}</TableCell>
-                  <TableCell>{new Date(req.created_at).toLocaleString()}</TableCell>
+                  <TableCell>
+                    {new Intl.DateTimeFormat('fa-AF', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    }).format(new Date(req.created_at))}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -442,7 +490,13 @@ export default function RequestTable() {
               />
               <Detail
                 label={t('created_at')}
-                value={new Date(selectedRequest.created_at).toLocaleString()}
+                value={new Intl.DateTimeFormat('fa-AF', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                }).format(new Date(selectedRequest.created_at))}
               />
 
               {/* Serial Number with Save button */}
