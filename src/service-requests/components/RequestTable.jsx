@@ -430,7 +430,7 @@ export default function RequestTable() {
         <div style={{ display: 'flex', gap: '8px' }}>
           {requests.some((r) => r.is_provider) && (
             <Button variant="outlined" size="small" onClick={() => setOpenFilters(true)}>
-              {t('Show Filters')}
+              {t('Show Reports')}
             </Button>
           )}
           <Button variant="outlined" onClick={fetchRequests}>
