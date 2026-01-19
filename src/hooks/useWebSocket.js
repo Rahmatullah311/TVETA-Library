@@ -44,6 +44,15 @@ export const useWebSocket = (token) => {
           return;
         }
 
+        // ✅ Backend confirmed: all notifications marked as read
+        if (data?.type === 'ALL_READ_SUCCESS') {
+          setNotifications((prev) =>
+            prev.map((n) => ({ ...n, isUnRead: false }))
+          );
+          return;
+        }
+
+        // Normal incoming notification
         setNotifications((prev) => [
           {
             id: data.id ?? `${Date.now()}-${Math.random()}`,
@@ -53,7 +62,7 @@ export const useWebSocket = (token) => {
             isUnRead: true,
             timestamp: data.created_at || new Date().toISOString(),
           },
-          ...prev, // ✅ newest first
+          ...prev, // newest first
         ]);
       } catch (err) {
         console.error('WebSocket parse error:', err);
@@ -90,7 +99,7 @@ export const useWebSocket = (token) => {
     };
   }, [connect]);
 
-  // MARK SINGLE AS READ
+  // MARK SINGLE AS READ (UI only)
   const markAsRead = useCallback((id) => {
     setNotifications((prev) =>
       prev.map((n) =>
@@ -99,11 +108,17 @@ export const useWebSocket = (token) => {
     );
   }, []);
 
-  // MARK ALL AS READ
+  // ✅ MARK ALL AS READ (DB + UI)
   const markAllAsRead = useCallback(() => {
-    setNotifications((prev) =>
-      prev.map((n) => ({ ...n, isUnRead: false }))
-    );
+    if (!wsRef.current) return;
+
+    if (wsRef.current.readyState === WebSocket.OPEN) {
+      wsRef.current.send(
+        JSON.stringify({
+          type: 'MARK_ALL_AS_READ',
+        })
+      );
+    }
   }, []);
 
   return {

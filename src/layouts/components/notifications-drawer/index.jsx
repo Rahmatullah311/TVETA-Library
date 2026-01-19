@@ -25,7 +25,7 @@ const TABS = [
 ];
 
 export function NotificationsDrawer({ sx }) {
-  const { t } = useTranslation(); // ✅ added for translation
+  const { t } = useTranslation(); //  added for translation
   const { value: open, onTrue: onOpen, onFalse: onClose } = useBoolean();
   const [currentTab, setCurrentTab] = useState('all');
 
