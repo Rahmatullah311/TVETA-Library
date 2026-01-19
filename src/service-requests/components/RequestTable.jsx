@@ -284,11 +284,12 @@ export default function RequestTable() {
     setCompletedByText('');
   };
 
-  const handleResetFilters = () => {
-    setStartDate(null);
-    setEndDate(null);
-    setSearch('');
-  };
+const handleResetFilters = async () => {
+  setStartDate(null);
+  setEndDate(null);
+  setSearch('');
+  await fetchRequests();
+};
 
   const priorityColors = {
     low: 'green',
