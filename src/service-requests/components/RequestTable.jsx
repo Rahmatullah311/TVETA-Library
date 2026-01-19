@@ -1,9 +1,9 @@
 'use client';
 
 import { Link } from 'react-router';
-import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import DatePicker from 'react-multi-date-picker';
+import React, { useState, useEffect } from 'react';
 import persian from 'react-date-object/calendars/persian';
 
 import {
@@ -39,24 +39,41 @@ export default function RequestTable() {
   const [completedByText, setCompletedByText] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [openFilters, setOpenFilters] = React.useState(false);
 
-const persian_af = {
-  months: [
-    "حمل", "ثور", "جوزا", "سرطان",
-    "اسد", "سنبله", "میزان", "عقرب",
-    "قوس", "جدی", "دلو", "حوت"
-  ],
+  const persian_af = {
+    months: [
+      'حمل',
+      'ثور',
+      'جوزا',
+      'سرطان',
+      'اسد',
+      'سنبله',
+      'میزان',
+      'عقرب',
+      'قوس',
+      'جدی',
+      'دلو',
+      'حوت',
+    ],
 
-  monthsShort: [
-    "حمل", "ثور", "جوزا", "سرطان",
-    "اسد", "سنبله", "میزان", "عقرب",
-    "قوس", "جدی", "دلو", "حوت"
-  ],
-  weekDays: ["یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه", "شنبه"],
-  digits: ["0","1","2","3","4","5","6","7","8","9"],
-};
-
-  
+    monthsShort: [
+      'حمل',
+      'ثور',
+      'جوزا',
+      'سرطان',
+      'اسد',
+      'سنبله',
+      'میزان',
+      'عقرب',
+      'قوس',
+      'جدی',
+      'دلو',
+      'حوت',
+    ],
+    weekDays: ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه', 'شنبه'],
+    digits: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+  };
 
   useEffect(() => {
     fetchRequests();
@@ -267,6 +284,12 @@ const persian_af = {
     setCompletedByText('');
   };
 
+  const handleResetFilters = () => {
+    setStartDate(null);
+    setEndDate(null);
+    setSearch('');
+  };
+
   const priorityColors = {
     low: 'green',
     medium: 'orange',
@@ -316,60 +339,100 @@ const persian_af = {
             />
           )}
         </div>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          {requests.some((r) => r.is_provider) && (
-            <>
-              {/* Start Date */}
-              <DatePicker
-                calendar={persian}
-                locale={persian_af}
-                value={startDate}
-                onChange={setStartDate}
-                format="YYYY/MM/DD"
-                render={(value, openCalendar) => (
-                  <TextField
-                    label={t('Start Date')}
-                    size="small"
-                    value={value}
-                    onClick={openCalendar}
-                    inputProps={{ readOnly: true }}
-                    InputLabelProps={{ shrink: true }}
-                    fullWidth
-                  />
-                )}
-              />
 
-              {/* End Date */}
-              <DatePicker
-                calendar={persian}
-                locale={persian_af}
-                value={endDate}
-                onChange={setEndDate}
-                format="YYYY/MM/DD"
-                render={(value, openCalendar) => (
-                  <TextField
-                    label={t('End Date')}
-                    size="small"
-                    value={value}
-                    onClick={openCalendar}
-                    inputProps={{ readOnly: true }}
-                    InputLabelProps={{ shrink: true }}
-                  />
-                )}
-              />
+        <Dialog open={openFilters} onClose={() => setOpenFilters(false)} maxWidth="sm" fullWidth>
+          <DialogTitle align="center">{t('Filters')}</DialogTitle>
 
-              <Button variant="contained" size="small" onClick={fetchRequests}>
-                {t('Filters')}
-              </Button>
+          <DialogContent
+            dividers
+            sx={{
+              minHeight: 320,
+              maxHeight: 500,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            {requests.some((r) => r.is_provider) && (
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '16px',
+                  width: '100%',
+                }}
+              >
+                {/* Start Date */}
+                <DatePicker
+                  calendar={persian}
+                  locale={persian_af}
+                  value={startDate}
+                  onChange={setStartDate}
+                  format="YYYY/MM/DD"
+                  render={(value, openCalendar) => (
+                    <TextField
+                      label={t('Start Date')}
+                      size="small"
+                      value={value}
+                      onClick={openCalendar}
+                      inputProps={{ readOnly: true }}
+                      InputLabelProps={{ shrink: true }}
+                      fullWidth
+                    />
+                  )}
+                />
 
-              <Button variant="contained" size="small" color="success" onClick={handleExportExcel}>
-                {t('Export Excel')}
-              </Button>
-            </>
-          )}
-        </div>
+                {/* End Date */}
+                <DatePicker
+                  calendar={persian}
+                  locale={persian_af}
+                  value={endDate}
+                  onChange={setEndDate}
+                  format="YYYY/MM/DD"
+                  render={(value, openCalendar) => (
+                    <TextField
+                      label={t('End Date')}
+                      size="small"
+                      value={value}
+                      onClick={openCalendar}
+                      inputProps={{ readOnly: true }}
+                      InputLabelProps={{ shrink: true }}
+                      fullWidth
+                    />
+                  )}
+                />
+              </div>
+            )}
+          </DialogContent>
+
+          <DialogActions sx={{ justifyContent: 'center', gap: 1 }}>
+            <Button color="error" onClick={handleResetFilters}>
+              {t('Reset')}
+            </Button>
+
+            <Button onClick={() => setOpenFilters(false)}>{t('close')}</Button>
+
+            <Button
+              variant="contained"
+              onClick={() => {
+                fetchRequests();
+                setOpenFilters(false);
+              }}
+            >
+              {t('Filters')}
+            </Button>
+
+            <Button variant="contained" color="success" onClick={handleExportExcel}>
+              {t('Export Excel')}
+            </Button>
+          </DialogActions>
+        </Dialog>
 
         <div style={{ display: 'flex', gap: '8px' }}>
+          {requests.some((r) => r.is_provider) && (
+            <Button variant="outlined" size="small" onClick={() => setOpenFilters(true)}>
+              {t('Show Filters')}
+            </Button>
+          )}
           <Button variant="outlined" onClick={fetchRequests}>
             {t('refresh')}
           </Button>

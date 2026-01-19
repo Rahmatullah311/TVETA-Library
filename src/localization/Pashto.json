@@ -160,7 +160,10 @@
    "End Date": "د پای نېټه",
   "Start Date": "د پیل نېټه",
   "Export Excel": "ایکسېل ته صادرول",
-  "Filters": "فلټرونه"
+  "Filters": "فلټرونه",
+  "close": "بندول",
+  "Reset": "بیا تنظیمول",
+  "Show Filters": "فلټرونه وښایاست"
 
 
 

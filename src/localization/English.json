@@ -162,7 +162,10 @@
   "End Date ": "End Date",
   "Start Date": "Start Date",
   "Export Excel": "Export to Excel",
-  "Filters": "Filter"
+  "Filters": "Filter",
+  "close" : "Close",
+  "Reset" : "Reset",
+  "Show Filters"  : "Show Filters"
 
 
 

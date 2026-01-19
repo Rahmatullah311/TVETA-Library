@@ -182,7 +182,11 @@
    "End Date": "تاریخ پایان",
   "Start Date": "تاریخ شروع",
   "Export Excel": "خروج به اکسل",
-  "Filters": "فیلتر"
+  "Filters": "فیلتر",
+  "close" : "بستن",
+  "Reset" : "بازنشانی",
+  "Show Filters"  : "نمایش فیلترها"
+
 
 
 
