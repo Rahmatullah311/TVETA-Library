@@ -1,5 +1,7 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
 
+const API_ROOT_URL = import.meta.env.VITE_API_ROOT_URL;
+
 export const useChatWebSocket = (requestId, token) => {
   const [messages, setMessages] = useState([]);
   const [isConnected, setIsConnected] = useState(false);
@@ -13,7 +15,7 @@ export const useChatWebSocket = (requestId, token) => {
     const wsUrl =
       process.env.NODE_ENV === 'production'
         ? `wss://${window.location.host}/ws/chat/${requestId}/?token=${token}`
-        : `ws://127.0.0.1:8000/ws/chat/${requestId}/?token=${token}`;
+        : `ws://${API_ROOT_URL}/ws/chat/${requestId}/?token=${token}`;
 
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;

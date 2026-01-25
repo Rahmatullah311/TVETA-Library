@@ -20,6 +20,8 @@ import { AccountButton } from './account-button';
 // ----------------------------------------------------------------------
 import { SignOutButton } from './sign-out-button';
 
+const API_ROOT_URL = import.meta.env.VITE_API_ROOT_URL;
+
 export function useUserProfile() {
   const [user, setUser] = useState(null);
 
@@ -28,7 +30,8 @@ export function useUserProfile() {
     const token = sessionStorage.getItem('jwt_access_token'); // <- use the key you stored
     if (!token) return;
 
-    fetch('http://127.0.0.1:8000/auth/profile/', {
+
+    fetch(`${API_ROOT_URL}auth/profile/`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`, // must have 'Bearer '

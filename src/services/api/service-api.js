@@ -1,10 +1,11 @@
 // src/services/api/service-api.js
 import axios from 'axios';
 
+const API_ROOT_URL = import.meta.env.VITE_API_ROOT_URL ?? 'http://127.0.0.1:8000/';
+
 
 // Base API configuration
-const API_BASE_URL = 'http://127.0.0.1:8000/';
-
+const API_BASE_URL = API_ROOT_URL;
 const serviceApi = axios.create({
   baseURL: `${API_BASE_URL}api/`,
   timeout: 30000, // Increased for file uploads

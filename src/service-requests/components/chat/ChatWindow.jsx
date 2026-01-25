@@ -5,6 +5,8 @@ import { useRef, useState, useEffect } from 'react';
 
 import { Button, TextField } from '@mui/material';
 
+const API_ROOT_URL = import.meta.env.VITE_API_ROOT_URL;
+
 export default function ChatWindow({ requestId, currentUser }) {
   const { t } = useTranslation();
   const [message, setMessage] = useState('');
@@ -17,7 +19,7 @@ export default function ChatWindow({ requestId, currentUser }) {
   useEffect(() => {
     const token = sessionStorage.getItem('jwt_access_token');
 
-    ws.current = new WebSocket(`ws://127.0.0.1:8000/ws/chat/${requestId}/?token=${token}`);
+    ws.current = new WebSocket(`ws://${API_ROOT_URL}/ws/chat/${requestId}/?token=${token}`);
 
     ws.current.onmessage = (e) => {
       const data = JSON.parse(e.data);

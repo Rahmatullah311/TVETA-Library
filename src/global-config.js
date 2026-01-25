@@ -2,6 +2,8 @@ import { paths } from 'src/routes/paths';
 
 import packageJson from '../package.json';
 
+const API_ROOT_URL = import.meta.env.VITE_API_ROOT_URL ?? 'http://127.0.0.1:8000/';
+
 // ----------------------------------------------------------------------
 
 export const CONFIG = {
@@ -9,7 +11,7 @@ export const CONFIG = {
   appVersion: packageJson.version,
   serverUrl: import.meta.env.VITE_SERVER_URL ?? '',
   assetsDir: import.meta.env.VITE_ASSETS_DIR ?? '',
-  api_root_url: import.meta.env.VITE_API_ROOT_URL ?? 'http://127.0.0.1:8000/',
+  api_root_url: API_ROOT_URL,
   /**
    * Auth
    * @method jwt | amplify | firebase | supabase | auth0

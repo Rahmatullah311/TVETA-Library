@@ -1,5 +1,7 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
 
+const API_ROOT_URL = import.meta.env.VITE_API_ROOT_URL;
+
 // this hook is used for notification
 export const useWebSocket = (token) => {
   const [notifications, setNotifications] = useState([]);
@@ -16,7 +18,7 @@ export const useWebSocket = (token) => {
     const wsUrl =
       process.env.NODE_ENV === 'production'
         ? `wss://${window.location.host}/ws/notifications/?token=${token}`
-        : `ws://127.0.0.1:8000/ws/notifications/?token=${token}`;
+        : `ws://${API_ROOT_URL}/ws/notifications/?token=${token}`;
 
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
