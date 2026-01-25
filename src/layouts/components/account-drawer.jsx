@@ -27,14 +27,14 @@ export function useUserProfile() {
 
   useEffect(() => {
     // Get the token from sessionStorage
-    const token = sessionStorage.getItem('jwt_access_token'); // <- use the key you stored
+    const token = sessionStorage.getItem('jwt_access_token'); 
     if (!token) return;
 
 
-    fetch(`${API_ROOT_URL}auth/profile/`, {
+    fetch(`${API_ROOT_URL}/auth/profile/`, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`, // must have 'Bearer '
+        Authorization: `Bearer ${token}`, 
       },
     })
       .then((res) => {
