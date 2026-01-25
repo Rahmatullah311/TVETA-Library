@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:8000';
+const API_ROOT_URL = import.meta.env.VITE_API_ROOT_URL ?? "http://127.0.0.1:8000/";
+
+const BASE_URL = API_ROOT_URL;
 
 // Get JWT token from localStorage
 const getToken = () => localStorage.getItem('access_token') || 
