@@ -47,8 +47,8 @@ export function JwtSignInView() {
   const [errorMessage, setErrorMessage] = useState(null);
 
   const defaultValues = {
-    username: 'test.user',
-    password: 'admin@123',
+    // username: 'test.user',
+    // password: 'admin@123',
   };
 
   const methods = useForm({
@@ -142,12 +142,12 @@ export function JwtSignInView() {
         sx={{ textAlign: { xs: 'center', md: 'left' } }}
       />
 
-      <Alert severity="info" sx={{ mb: 3 }}>
+      {/* <Alert severity="info" sx={{ mb: 3 }}>
         {t('UseCredentials')}
         <strong>{defaultValues.username}</strong>
         {t('WithPassword')}
         <strong>{defaultValues.password}</strong>
-      </Alert>
+      </Alert> */}
 
       {!!errorMessage && (
         <Alert severity="error" sx={{ mb: 3 }}>
