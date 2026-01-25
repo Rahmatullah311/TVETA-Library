@@ -58,7 +58,7 @@ export function JwtSignUpView() {
 
   const methods = useForm({
     resolver: zodResolver(SignUpSchema),
-    defaultValues,
+    // defaultValues,
   });
 
   const {
